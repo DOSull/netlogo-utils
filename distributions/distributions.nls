@@ -68,7 +68,7 @@ end
 ;; from the list of frequencies supplied - these can be floats
 ;; although if ints can be arranged, then use random-multinomial-int
 ;; instead as it will be quicker
-;; simple-frequencies? will most often be true... and allows for 
+;; simple-frequencies? will most often be true... and allows for
 ;;      pre-calculation of the serial relative frequencies
 ;; if true the provided frequencies are converted to a set of serial relative
 ;;      by passing them to conditional-probabilities
@@ -123,17 +123,16 @@ end
 ;; for a provided list of relative frequencies [f_i]
 ;; returns the conditional probabilities [f_i / sum_i..n f_i]
 to-report conditional-probabilities [frequencies]
-  report (map [ [f s] -> ifelse-value (s > 0) [f / s] [0] ] frequencies cumulative-remainder frequencies)
+  report (map [ [f s] -> ifelse-value (s > 0) [f / s] [0] ] frequencies dists-cumulative-remainder frequencies)
 end
 
 ;; for a list [x_i] returns [sum_i..n x_i]
 ;; e.g. 1 2 3 4 5 6 --> 21 20 18 15 11 6
-;; same as reverse cumulative-sum reverse L
-to-report cumulative-remainder [L]
+;; same as reverse dists-cumulative-sum reverse L
+to-report dists-cumulative-remainder [L]
   report but-last reduce [ [a b] -> lput (last a - b) a ] fput (list sum L) L
 end
-
-to-report cumulative-sum [L]
+to-report dists-cumulative-sum [L]
   report but-first reduce [ [a b] -> lput (last a + b) a ] fput [0] L
 end
 
