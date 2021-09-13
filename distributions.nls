@@ -47,7 +47,7 @@ to-report random-binomial [n p]
 end
 
 
-;; negative binomial implemented as a Poisson draw paramterised
+;; negative binomial implemented as a Poisson draw parameterised
 ;; with a Gamma distributed variate per
 ;; https://en.wikipedia.org/wiki/Negative_binomial_distribution#Gamma%E2%80%93Poisson_mixture
 to-report random-nbinomial [r p]
@@ -68,14 +68,16 @@ end
 ;; from the list of frequencies supplied - these can be floats
 ;; although if ints can be arranged, then use random-multinomial-int
 ;; instead as it will be quicker
-;; rescale? allows pre-calculation of the relative frequencies
-;; if true the provided frequencies are calculated as we go
-;; if false the provided frequencies can be used as-is
-;; this could be useful for a spatial kernel where the frequencies
-;; do not change
-to-report random-multinomial-float [n frequencies rescale?]
+;; simple-frequencies? will most often be true... and allows for 
+;;      pre-calculation of the serial relative frequencies
+;; if true the provided frequencies are converted to a set of serial relative
+;;      by passing them to conditional-probabilities
+;; if false the provided frequencies are already serial relative frequencies
+;;      and are used as-is
+;; this could be useful for efficiency when the frequencies are not changing
+to-report random-multinomial-float [n frequencies simple-frequencies?]
   let conditional-freqs []
-  ifelse rescale?
+  ifelse simple-frequencies?
   [ set conditional-freqs conditional-probabilities frequencies ]
   [ set conditional-freqs frequencies ]
   ;; empty list for the results
@@ -108,9 +110,9 @@ end
 ;; a value greater or less than 1. Greater than will cause an error
 ;; in the binomial draw and less than may cause the total not to sum
 ;; to n, since there is a small probability the last case won't happen
-to-report random-multinomial-int [n frequencies rescale?]
+to-report random-multinomial-int [n frequencies simple-frequencies?]
   let conditional-freqs []
-  ifelse rescale?
+  ifelse simple-frequencies?
   [ set conditional-freqs conditional-probabilities frequencies ]
   [ set conditional-freqs frequencies ]
   report reduce [ [a p] ->
