@@ -15,7 +15,7 @@ All the listed reporters and/or procedures will then be available in your model 
 
 ## Reporters
 ### `random-binomial` _n_ _p_
-Returns a random binomial deviate $B(n, p)$. For small numbers of random binomial deviates, you could use
+Returns a random binomial deviate _B(n, p)_. For small numbers of random binomial deviates, you could use
 
     length filter [x -> x < p] n-values [x -> random-float 1]
 
