@@ -1,0 +1,169 @@
+;; The MIT License (MIT)
+;;
+;; Copyright (c) 2021 David O'Sullivan
+;;
+;; Permission is hereby granted, free of charge, to any person
+;; obtaining a copy of this software and associated documentation
+;; files (the "Software"), to deal in the Software without restriction,
+;; including without limitation the rights to use, copy, modify, merge,
+;; publish, distribute, sublicense, and/or sell copies of the Software,
+;; and to  permit persons to whom the Software is furnished to do so,
+;; subject to the following conditions:
+;;
+;; The above copyright notice and this permission notice shall be included
+;; in all copies or substantial portions of the Software.
+;;
+;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+;; OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+;; FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+;; THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+;; LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+;; FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+;; DEALINGS IN THE SOFTWARE.
+
+
+; This binomial algorithm from
+; Devroye. L. 1960. Generating the maximum of independent identically
+; distributed random variables. Computers and Mathematics with
+; Applications 6, 305-315.
+; Based on code from
+; https://stackoverflow.com/questions/23561551/a-efficient-binomial-random-number-generator-code-in-java#23574723
+to-report random-binomial [n p]
+  ; need to trap p = 0 and p = 1
+  if p >= 1 [ report n ]
+  if p <= 0 [ report 0 ]
+  let ln-q ln (1 - p)
+  let x 0
+  let s 0
+  ; also need to avoid x = n
+  while [x < n] [
+    set s s + ln (random-float 1) / (n - x)
+    if s < ln-q [
+      report x
+    ]
+    set x x + 1
+  ]
+  report x
+end
+
+
+;; negative binomial implemented as a Poisson draw paramterised 
+;; with a Gamma distributed variate per 
+;; https://en.wikipedia.org/wiki/Negative_binomial_distribution#Gamma%E2%80%93Poisson_mixture
+to-report random-nbinomial [r p]
+  report random-poisson random-gamma r ((1 - p) / p)
+end
+
+;; wrapper to get a negative binomial variate with mean m and variance mean ratio vmr
+;; the standard nbin parameters are r and p
+to-report random-nbinomial-with-mean-vmr [m vmr]
+  let r m / (vmr - 1)
+  let p 1 - 1 / vmr
+  report random-nbinomial r p
+end
+
+
+;; perform repeated binomial draws from population n
+;; without replacement, with p based on ratios determined
+;; from the list of frequencies supplied - these can be floats
+;; although if ints can be arranged, then use random-multinomial-int
+;; instead as it will be quicker
+;; rescale? allows pre-calculation of the relative frequencies
+;; if true the provided frequencies are calculated as we go
+;; if false the provided frequencies can be used as-is
+;; this could be useful for a spatial kernel where the frequencies
+;; do not change
+to-report random-multinomial-float [n frequencies rescale?]
+  let conditional-freqs []
+  ifelse rescale?
+  [ set conditional-freqs conditional-probabilities frequencies ]
+  [ set conditional-freqs frequencies ]
+  ;; empty list for the results
+  let result []
+  ;; remember how many values we will need
+  let num-values length conditional-freqs
+  ;; keep going as long as we haven't drawn all n
+  while [sum result < n] [
+    ;; the next draw is based on the proportion of
+    ;; the remaining total represented by the first number
+    ;; first time around this will be n0 / total
+    ;; then it will be n1 / (total - n0), and so on
+    let px first conditional-freqs
+    ;; meanwhile the number remaining to be drawn is n - sum result, so...
+    ifelse px > 0
+    [ set result sentence result random-binomial (n - sum result) px ]
+    [ set result sentence result 0 ]
+    set conditional-freqs but-first conditional-freqs
+  ]
+  ;; if the result is not the required length then pack it with zeros
+  ifelse length result < num-values
+  [ report pack-zeros result num-values true]
+  [ report result ]
+end
+
+;; this works ONLY with integer frequencies but is faster than the -float version
+;; because that way we are guaranteed to get a final probability of 1
+;; (because floating-point arithmetic with small numbers is unreliable
+;; and will often produce rescaled probabilities that terminate with
+;; a value greater or less than 1. Greater than will cause an error
+;; in the binomial draw and less than may cause the total not to sum
+;; to n, since there is a small probability the last case won't happen
+to-report random-multinomial-int [n frequencies rescale?]
+  let conditional-freqs []
+  ifelse rescale?
+  [ set conditional-freqs conditional-probabilities frequencies ]
+  [ set conditional-freqs frequencies ]
+  report reduce [ [a p] -> 
+    lput (ifelse-value (p > 0) [random-binomial (n - sum a) p] [0]) a
+  ] fput [] conditional-freqs
+end
+
+;; for a provided list of relative frequencies [f_i]
+;; returns the conditional probabilities [f_i / sum_i..n f_i]
+to-report conditional-probabilities [frequencies]
+  report (map [ [f s] -> ifelse-value (s > 0) [f / s] [0] ] frequencies cumulative-remainder frequencies)
+end
+
+;; for a list [x_i] returns [sum_i..n x_i]
+;; e.g. 1 2 3 4 5 6 --> 21 20 18 15 11 6
+;; same as reverse cumulative-sum reverse L
+to-report cumulative-remainder [L]
+  report but-last reduce [ [a b] -> lput (last a - b) a ] fput (list sum L) L
+end
+
+to-report cumulative-sum [L]
+  report but-first reduce [ [a b] -> lput (last a + b) a ] fput [0] L
+end
+
+
+;; pack list out to length 0 with zeros
+;; either post-pack or pre-pack depending on post
+to-report pack-zeros [lst n post?]
+  ifelse post?
+  [ report sublist (sentence lst n-values n [x -> 0]) 0 n ]
+  [ report sublist (sentence n-values n [x -> 0] lst) 0 n ]
+end
+
+to-report random-cauchy [locn scl]
+  report locn + scl * (tan (-90 + random-float 180))
+end
+
+;; https://stackoverflow.com/questions/33611708/random-number-generator-with-generalized-pareto-distribution-and-weilbull-distri
+to-report random-weibull [shp scl lower-limit upper-limit]
+  let result upper-limit
+  while [result >= upper-limit or result < lower-limit] [
+    set result scl * (-1 * ln (random-float 1)) ^ (1 / shp)
+  ]
+  report result
+end
+
+to-report random-gamma-with-mean-sd [mn sd]
+  let g-scale mn / sd / sd
+  let g-shape mn * g-scale
+  report random-gamma g-shape g-scale
+end
+
+to-report population-standard-deviation [x]
+  let m mean x
+  report sqrt mean map [xi -> (xi - m) ^ 2] x
+end
