@@ -47,8 +47,8 @@ to-report random-binomial [n p]
 end
 
 
-;; negative binomial implemented as a Poisson draw paramterised 
-;; with a Gamma distributed variate per 
+;; negative binomial implemented as a Poisson draw paramterised
+;; with a Gamma distributed variate per
 ;; https://en.wikipedia.org/wiki/Negative_binomial_distribution#Gamma%E2%80%93Poisson_mixture
 to-report random-nbinomial [r p]
   report random-poisson random-gamma r ((1 - p) / p)
@@ -113,7 +113,7 @@ to-report random-multinomial-int [n frequencies rescale?]
   ifelse rescale?
   [ set conditional-freqs conditional-probabilities frequencies ]
   [ set conditional-freqs frequencies ]
-  report reduce [ [a p] -> 
+  report reduce [ [a p] ->
     lput (ifelse-value (p > 0) [random-binomial (n - sum a) p] [0]) a
   ] fput [] conditional-freqs
 end
@@ -164,6 +164,10 @@ to-report random-gamma-with-mean-sd [mn sd]
 end
 
 to-report population-standard-deviation [x]
+  report sqrt population-variance x
+end
+
+to-report population-variance [x]
   let m mean x
-  report sqrt mean map [xi -> (xi - m) ^ 2] x
+  report mean map [xi -> (xi - m) ^ 2] x
 end
