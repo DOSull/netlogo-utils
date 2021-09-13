@@ -19,7 +19,7 @@ Returns a random binomial deviate _B(n, p)_. For small numbers of random binomia
 
     length filter [x -> x < p] n-values [x -> random-float 1]
 
-but this approach slows down quickly since it is _O(n)_ and it is common to have _p_ << _n_,to be working with large _n_ and to be calling the reporter a lot. For _p_ relatively large, you can get away with `random-poisson (n * p)` as a quick hack, but if you're thinking about doing actual science with your model, this is probably best avoided.  
+but this approach slows down quickly since it is _O(n)_ and it is common to have _p_ << _n_, to be working with large _n_ and to be calling the reporter a lot. For _p_ relatively large, you can get away with `random-poisson (n * p)` as a quick hack, but if you're thinking about doing actual science with your model, this is probably best avoided.  
 
 Instead, the reporter provided in `distributions.nls` implements the algorithm in
 
