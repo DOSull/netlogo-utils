@@ -22,6 +22,13 @@
 ;; DEALINGS IN THE SOFTWARE.
 
 
+to-report random-lognormal [mn sd]
+  let lvar ln (1 + (sd ^ 2) / (mn ^ 2))
+  let lmn ln mn - (lvar / 2)
+  let lsd sqrt lvar
+  report exp (lmn + lsd * random-normal 0 1)
+end
+
 ; This binomial algorithm from
 ; Devroye. L. 1960. Generating the maximum of independent identically
 ; distributed random variables. Computers and Mathematics with
@@ -110,11 +117,8 @@ end
 ;; a value greater or less than 1. Greater than will cause an error
 ;; in the binomial draw and less than may cause the total not to sum
 ;; to n, since there is a small probability the last case won't happen
-to-report random-multinomial-int [n frequencies simple-frequencies?]
-  let conditional-freqs []
-  ifelse simple-frequencies?
-  [ set conditional-freqs conditional-probabilities frequencies ]
-  [ set conditional-freqs frequencies ]
+to-report random-multinomial-int [n frequencies]
+  let conditional-freqs conditional-probabilities frequencies
   report reduce [ [a p] ->
     lput (ifelse-value (p > 0) [random-binomial (n - sum a) p] [0]) a
   ] fput [] conditional-freqs

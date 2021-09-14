@@ -128,7 +128,7 @@ BUTTON
 596
 129
 test-multinomial
-ask patches [\n  set weight random-poisson 10\n]\nlet weights map [p -> [weight] of p] sort patches\nlet values random-multinomial-int (count patches * number-of-draws) weights true\n(foreach sort patches values [ [p v] ->\n  ask p [set value v]\n]) \nupdate-displays colour-by-value?\n 
+ask patches [\n  set weight random-poisson 10\n]\nlet weights map [p -> [weight] of p] sort patches\nlet values random-multinomial-int (count patches * number-of-draws) weights\n(foreach sort patches values [ [p v] ->\n  ask p [set value v]\n]) \nupdate-displays colour-by-value?\n 
 NIL
 1
 T
@@ -173,7 +173,7 @@ BUTTON
 632
 168
 test-multinomial-float
-ask patches [\n  set weight random-float 1\n]\nlet weights map [p -> [weight] of p] sort patches\nlet values random-multinomial-int (count patches * number-of-draws) weights true\n(foreach sort patches values [ [p v] ->\n  ask p [set value v]\n]) \nupdate-displays colour-by-value?\n 
+ask patches [\n  set weight random-float 1\n]\nlet weights map [p -> [weight] of p] sort patches\nlet values random-multinomial-float (count patches * number-of-draws) weights true\n(foreach sort patches values [ [p v] ->\n  ask p [set value v]\n]) \nupdate-displays colour-by-value?\n 
 NIL
 1
 T
@@ -225,7 +225,7 @@ variance-mean-ratio
 variance-mean-ratio
 1
 10
-4.1
+3.9
 0.01
 1
 NIL
@@ -439,6 +439,53 @@ population-standard-deviation [ifelse-value colour-by-value? [value] [weight]] o
 5
 1
 11
+
+BUTTON
+449
+604
+585
+637
+test-lognormal
+ask patches [\n  set value random-lognormal log-mean log-sd\n]\nupdate-displays true
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+SLIDER
+622
+591
+794
+624
+log-mean
+log-mean
+0.01
+10
+0.96
+0.01
+1
+NIL
+HORIZONTAL
+
+SLIDER
+625
+643
+797
+676
+log-sd
+log-sd
+0
+2
+0.23
+0.01
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -782,7 +829,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.2.0
+NetLogo 6.1.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
