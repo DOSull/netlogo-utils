@@ -1,3 +1,21 @@
+;; additional list utilities for Netlogo
+
+to-report cumulative-sum [lst]
+  report but-first reduce [ [a b] -> lput (last a + b) a] (fput [0] lst)
+end
+
+to-report insert-value-in-order [L x]
+  report (sentence filter [v -> v < x] L x filter [v -> v >= x] L)
+end
+
+to-report insert-values-in-order [L new]
+  report reduce [ [a b] -> insert-value-in-order a b] (fput L new)
+end
+
+to-report split-list-at-value [L x] ;; assume list is ordered
+  report (list filter [v -> v < x] L filter [v -> v >= x] L)
+end
+
 ;; The MIT License (MIT)
 ;;
 ;; Copyright (c) 2021 David O'Sullivan
@@ -20,20 +38,3 @@
 ;; LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 ;; FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 ;; DEALINGS IN THE SOFTWARE.
-
-
-to-report cumulative-sum [lst]
-  report but-first reduce [ [a b] -> lput (last a + b) a] (fput [0] lst)
-end
-
-to-report insert-value-in-order [L x]
-  report (sentence filter [v -> v < x] L x filter [v -> v >= x] L)
-end
-
-to-report insert-values-in-order [L new]
-  report reduce [ [a b] -> insert-value-in-order a b] (fput L new)
-end
-
-to-report split-list-at-value [L x] ;; assume list is ordered
-  report (list filter [v -> v < x] L filter [v -> v >= x] L)
-end

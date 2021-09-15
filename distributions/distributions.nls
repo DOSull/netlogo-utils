@@ -1,26 +1,4 @@
-;; The MIT License (MIT)
-;;
-;; Copyright (c) 2021 David O'Sullivan
-;;
-;; Permission is hereby granted, free of charge, to any person
-;; obtaining a copy of this software and associated documentation
-;; files (the "Software"), to deal in the Software without restriction,
-;; including without limitation the rights to use, copy, modify, merge,
-;; publish, distribute, sublicense, and/or sell copies of the Software,
-;; and to  permit persons to whom the Software is furnished to do so,
-;; subject to the following conditions:
-;;
-;; The above copyright notice and this permission notice shall be included
-;; in all copies or substantial portions of the Software.
-;;
-;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-;; OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-;; FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-;; THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-;; LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-;; FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-;; DEALINGS IN THE SOFTWARE.
-
+;; additional probability distributions for NetLogo
 
 to-report random-lognormal [mn sd]
   let lvar ln (1 + (sd ^ 2) / (mn ^ 2))
@@ -36,7 +14,10 @@ end
 ; Based on code from
 ; https://stackoverflow.com/questions/23561551/a-efficient-binomial-random-number-generator-code-in-java#23574723
 to-report random-binomial [n p]
-  ; need to trap p = 0 and p = 1
+  ;; check this, but ...
+  if p > 1 [ print "WARNING: random-binomial p > 1" ]
+  if p < 0 [ print "WARNING: random-binomial p < 0" ]
+  ;; ... forgive it!
   if p >= 1 [ report n ]
   if p <= 0 [ report 0 ]
   let ln-q ln (1 - p)
@@ -57,78 +38,64 @@ end
 ;; negative binomial implemented as a Poisson draw parameterised
 ;; with a Gamma distributed variate per
 ;; https://en.wikipedia.org/wiki/Negative_binomial_distribution#Gamma%E2%80%93Poisson_mixture
-to-report random-nbinomial [r p]
+to-report random-negative-binomial [r p]
   report random-poisson random-gamma r ((1 - p) / p)
 end
 
 ;; wrapper to get a negative binomial variate with mean m and variance mean ratio vmr
 ;; the standard nbin parameters are r and p
-to-report random-nbinomial-with-mean-vmr [m vmr]
+to-report random-negative-binomial-with-mean-vmr [m vmr]
   let r m / (vmr - 1)
   let p 1 - 1 / vmr
-  report random-nbinomial r p
+  report random-negative-binomial r p
 end
 
 
-;; perform repeated binomial draws from population n
-;; without replacement, with p based on ratios determined
-;; from the list of frequencies supplied - these can be floats
-;; although if ints can be arranged, then use random-multinomial-int
-;; instead as it will be quicker
-;; simple-frequencies? will most often be true... and allows for
-;;      pre-calculation of the serial relative frequencies
-;; if true the provided frequencies are converted to a set of serial relative
-;;      by passing them to conditional-probabilities
-;; if false the provided frequencies are already serial relative frequencies
-;;      and are used as-is
-;; this could be useful for efficiency when the frequencies are not changing
-to-report random-multinomial-float [n frequencies simple-frequencies?]
-  let conditional-freqs []
-  ifelse simple-frequencies?
-  [ set conditional-freqs conditional-probabilities frequencies ]
-  [ set conditional-freqs frequencies ]
-  ;; empty list for the results
-  let result []
-  ;; remember how many values we will need
-  let num-values length conditional-freqs
-  ;; keep going as long as we haven't drawn all n
-  while [sum result < n] [
-    ;; the next draw is based on the proportion of
-    ;; the remaining total represented by the first number
-    ;; first time around this will be n0 / total
-    ;; then it will be n1 / (total - n0), and so on
-    let px first conditional-freqs
-    ;; meanwhile the number remaining to be drawn is n - sum result, so...
-    ifelse px > 0
-    [ set result sentence result random-binomial (n - sum result) px ]
-    [ set result sentence result 0 ]
-    set conditional-freqs but-first conditional-freqs
-  ]
-  ;; if the result is not the required length then pack it with zeros
-  ifelse length result < num-values
-  [ report pack-zeros result num-values true]
-  [ report result ]
-end
 
-;; this works ONLY with integer frequencies but is faster than the -float version
-;; because that way we are guaranteed to get a final probability of 1
-;; (because floating-point arithmetic with small numbers is unreliable
-;; and will often produce rescaled probabilities that terminate with
-;; a value greater or less than 1. Greater than will cause an error
-;; in the binomial draw and less than may cause the total not to sum
-;; to n, since there is a small probability the last case won't happen
 to-report random-multinomial-int [n frequencies]
-  let conditional-freqs conditional-probabilities frequencies
   report reduce [ [a p] ->
     lput (ifelse-value (p > 0) [random-binomial (n - sum a) p] [0]) a
-  ] fput [] conditional-freqs
+  ] fput [] conditional-probabilities frequencies
 end
 
 ;; for a provided list of relative frequencies [f_i]
 ;; returns the conditional probabilities [f_i / sum_i..n f_i]
 to-report conditional-probabilities [frequencies]
-  report (map [ [f s] -> ifelse-value (s > 0) [f / s] [0] ] frequencies dists-cumulative-remainder frequencies)
+  report (map [ [f s] -> ifelse-value (s > 0) [f / s] [0] ]
+                frequencies
+                dists-cumulative-remainder frequencies)
 end
+
+
+
+to-report random-multinomial [n frequencies simple-frequencies?]
+  let conditional-probs frequencies
+  if simple-frequencies? [
+    set conditional-probs conditional-probabilities-with-forcing frequencies
+  ]
+  report reduce [ [a p] ->
+    lput (ifelse-value (p > 0) [random-binomial (n - sum a) p] [0]) a
+  ] fput [] conditional-probs
+end
+
+;; for a provided list of relative frequencies [f_i]
+;; returns the conditional probabilities [f_i / sum_i..n f_i]
+to-report conditional-probabilities-with-forcing [frequencies]
+  let c-p (map [ [f s] -> ifelse-value (s > 0) [f / s] [0] ]
+                frequencies
+                dists-cumulative-remainder frequencies)
+  report replace-item (last-positive c-p) c-p 1
+end
+
+
+to-report last-positive [L]
+  report last-position true (map [x -> x > 0] L)
+end
+
+to-report last-position [x L]
+  report length L - position x reverse L - 1
+end
+
 
 ;; for a list [x_i] returns [sum_i..n x_i]
 ;; e.g. 1 2 3 4 5 6 --> 21 20 18 15 11 6
@@ -136,18 +103,11 @@ end
 to-report dists-cumulative-remainder [L]
   report but-last reduce [ [a b] -> lput (last a - b) a ] fput (list sum L) L
 end
+
 to-report dists-cumulative-sum [L]
   report but-first reduce [ [a b] -> lput (last a + b) a ] fput [0] L
 end
 
-
-;; pack list out to length 0 with zeros
-;; either post-pack or pre-pack depending on post
-to-report pack-zeros [lst n post?]
-  ifelse post?
-  [ report sublist (sentence lst n-values n [x -> 0]) 0 n ]
-  [ report sublist (sentence n-values n [x -> 0] lst) 0 n ]
-end
 
 to-report random-cauchy [locn scl]
   report locn + scl * (tan (-90 + random-float 180))
@@ -176,3 +136,26 @@ to-report population-variance [x]
   let m mean x
   report mean map [xi -> (xi - m) ^ 2] x
 end
+
+;; The MIT License (MIT)
+;;
+;; Copyright (c) 2021 David O'Sullivan
+;;
+;; Permission is hereby granted, free of charge, to any person
+;; obtaining a copy of this software and associated documentation
+;; files (the "Software"), to deal in the Software without restriction,
+;; including without limitation the rights to use, copy, modify, merge,
+;; publish, distribute, sublicense, and/or sell copies of the Software,
+;; and to  permit persons to whom the Software is furnished to do so,
+;; subject to the following conditions:
+;;
+;; The above copyright notice and this permission notice shall be included
+;; in all copies or substantial portions of the Software.
+;;
+;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+;; OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+;; FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+;; THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+;; LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+;; FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+;; DEALINGS IN THE SOFTWARE.

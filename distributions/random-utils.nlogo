@@ -1,26 +1,3 @@
-;; The MIT License (MIT)
-;;
-;; Copyright (c) 2021 David O'Sullivan
-;;
-;; Permission is hereby granted, free of charge, to any person
-;; obtaining a copy of this software and associated documentation
-;; files (the "Software"), to deal in the Software without restriction,
-;; including without limitation the rights to use, copy, modify, merge,
-;; publish, distribute, sublicense, and/or sell copies of the Software,
-;; and to  permit persons to whom the Software is furnished to do so,
-;; subject to the following conditions:
-;;
-;; The above copyright notice and this permission notice shall be included
-;; in all copies or substantial portions of the Software.
-;;
-;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-;; OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-;; FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-;; THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-;; LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-;; FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-;; DEALINGS IN THE SOFTWARE.
-
 __includes ["distributions.nls"]
 
 patches-own [
@@ -47,6 +24,29 @@ to update-displays [value?]
   set-histogram-num-bars 15
   histogram [value] of patches
 end
+
+; The MIT License (MIT)
+;;
+;; Copyright (c) 2021 David O'Sullivan
+;;
+;; Permission is hereby granted, free of charge, to any person
+;; obtaining a copy of this software and associated documentation
+;; files (the "Software"), to deal in the Software without restriction,
+;; including without limitation the rights to use, copy, modify, merge,
+;; publish, distribute, sublicense, and/or sell copies of the Software,
+;; and to  permit persons to whom the Software is furnished to do so,
+;; subject to the following conditions:
+;;
+;; The above copyright notice and this permission notice shall be included
+;; in all copies or substantial portions of the Software.
+;;
+;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+;; OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+;; FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+;; THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+;; LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+;; FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+;; DEALINGS IN THE SOFTWARE.
 @#$#@#$#@
 GRAPHICS-WINDOW
 12
@@ -84,7 +84,7 @@ number-of-draws
 number-of-draws
 0
 1000
-10.0
+99.0
 1
 1
 NIL
@@ -128,7 +128,7 @@ BUTTON
 596
 129
 test-multinomial
-ask patches [\n  set weight random-poisson 10\n]\nlet weights map [p -> [weight] of p] sort patches\nlet values random-multinomial-int (count patches * number-of-draws) weights\n(foreach sort patches values [ [p v] ->\n  ask p [set value v]\n]) \nupdate-displays colour-by-value?\n 
+ask patches [\n  set weight random-poisson multinomial-mean\n]\nlet weights map [p -> [weight] of p] sort patches\nlet values random-multinomial-int (count patches * number-of-draws) weights\n(foreach sort patches values [ [p v] ->\n  ask p [set value v]\n]) \nupdate-displays colour-by-value?\n
 NIL
 1
 T
@@ -169,28 +169,11 @@ NIL
 
 BUTTON
 448
-135
-632
-168
-test-multinomial-float
-ask patches [\n  set weight random-float 1\n]\nlet weights map [p -> [weight] of p] sort patches\nlet values random-multinomial-float (count patches * number-of-draws) weights true\n(foreach sort patches values [ [p v] ->\n  ask p [set value v]\n]) \nupdate-displays colour-by-value?\n 
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-448
 189
 582
 222
 test-nbinomial
-ask patches [\n  set value random-nbinomial n-failures probability\n]\nupdate-displays true
+ask patches [\n  set value random-negative-binomial n-failures probability\n]\nupdate-displays true
 NIL
 1
 T
@@ -237,7 +220,7 @@ BUTTON
 583
 264
 test-nbinom-vmr
-ask patches [\n  set value random-nbinomial-with-mean-vmr mean-result variance-mean-ratio\n]\nupdate-displays true
+ask patches [\n  set value random-negative-binomial-with-mean-vmr mean-result variance-mean-ratio\n]\nupdate-displays true
 NIL
 1
 T
@@ -481,11 +464,43 @@ log-sd
 log-sd
 0
 2
-0.23
+0.39
 0.01
 1
 NIL
 HORIZONTAL
+
+SLIDER
+621
+104
+818
+137
+multinomial-mean
+multinomial-mean
+0.1
+100
+28.1
+0.1
+1
+NIL
+HORIZONTAL
+
+BUTTON
+451
+143
+605
+176
+test-multinomial-float
+ask patches [\n  set weight random-exponential multinomial-mean\n]\nlet weights map [p -> [weight] of p] sort patches\nlet values random-multinomial (count patches * number-of-draws) weights true\n(foreach sort patches values [ [p v] ->\n  ask p [set value v]\n]) \nupdate-displays colour-by-value?\n
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -829,7 +844,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.1.0
+NetLogo 6.2.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
