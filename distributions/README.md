@@ -60,7 +60,7 @@ Reports a lognormal distributed random variate with mean _mean_ and standard dev
 
 See [`random-multinomial-int`](#random-multinomial-int) for an explanation of the basic operation of this reporter. This version of the multinomial generator allows floating-point relative frequencies. Depending on _simple-frequencies?_ the provided list of frequencies may be either simple relative frequencies (when _simple-frequencies?_ is `true`) or precomputed serial conditional probabilities (when _simple-frequencies?_ is `false`).
 
-Serial conditional probabilities care obtained from the helper reporter [`conditional-probabilities-with-forcing`](#conditional-probabilities-with-forcing) which enforces the necessary condition that the last non-zero probability is equal to 1, a condition not guaranteed as a side-effect of floating point division precision.
+Serial conditional probabilities are obtained from the helper reporter [`conditional-probabilities-with-forcing`](#conditional-probabilities-with-forcing) which enforces the necessary condition that the last non-zero probability is equal to 1, a condition not guaranteed as a side-effect of imprecision in floating point arithmetic.
 
 Use `random-multinomial` when you cannot provide relative frequencies as a list of integers (`random-multinomial-int` is faster) or when the list of frequencies is fixed across many calls to the function. In this case do, for example
 
@@ -95,7 +95,7 @@ The required serial conditional probabilities are obtained by calling
 
     conditional-probabilities _frequencies_
 
-The implementation makes use of [`dists-cumulative-remainder`](#dists-cumulative-remainder).
+The implementation uses [`dists-cumulative-remainder`](#dists-cumulative-remainder).
 
 ### `random-negative-binomial`
 **random-negative-binomial** _r_ _p_
@@ -127,6 +127,11 @@ This reporter returns a serial set of conditional probabilities derived from the
 
 Floating point division problems occasionally cause the final value in the list to not equal 1, when it always should do, so this expectation is enforced in the code, meaning that there may be small errors where very small marginal probabilities are involved.
 
+### `conditional-probabilities-with-forcing`
+**conditional-probabilities-with-forcing** _frequencies_
+
+A version of [`conditional-probabilities`](#conditional-probabilities) suitable for floating point _frequencies_ when arithmentic inaccuracies may cause the last non-zero conditional probability not to be 1. This condition is enforced by this reporter.
+
 ### `dists-cumulative-remainder`
 **dists-cumulative-remainder** _list_
 
@@ -142,16 +147,6 @@ Reports a list of the cumulative sum of the supplied list _list_, that is `[sum_
 
     dists-cumulative-sum [1 2 3 4 5]
     > [1 3 6 10 15]
-
-### `pack-zeros`
-**pack-zeros** _list_ _n_ _post?_
-
-Reports a list of length _n_ by packing the supplied list _list_ with zeros either at the end (if _post?_ is `true`) or at the beginning (if _post?_ is `false`)
-
-    pack-zeros [1 2 3] 5 true
-    > [1 2 3 0 0]
-    pack-zeros [1 2 3] 5 false
-    > [0 0 0 0 0]
 
 ### `population-standard-deviation`
 **population-standard-deviation** _list_
