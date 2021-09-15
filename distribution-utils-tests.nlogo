@@ -536,7 +536,9 @@ The reporter in `distribution-utils.nls` implements the algorithm in
 distributed random variables. _Computers and Mathematics with
 Applications_ **6**, 305-315. DOI:[10.1016/0898-1221(80)90039-5](https://dx.doi.org/10.1016/0898-1221(80)90039-5)
 
-and is _O(np)_ which will often be much quicker than the naive approach, and unlike the Poisson approach, is correct even for small values of _p_. If _p_ is less than 0 or greater than 1 a warning message is printed to the console, but the reporter will return a value 0 or _n_ respectively (i.e., it will _not_ crash). During development keep a look out for this, since you should not be calling a binomial with _p_ not in the range _[0, 1]_.
+and is _O(np)_ which will often be much quicker than the naive approach, and unlike the Poisson approach, is correct even for small values of _p_.
+
+If _p_ is less than 0, it will report 0, which is incorrect. If _p_ is greater than 1 then it will crash. Just make sure 0 &le; _p_ &le; 1!
 
 I originally found this as code from [this post](
 https://stackoverflow.com/questions/23561551/a-efficient-binomial-random-number-generator-code-in-java#23574723), but later discovered an error and had to track down and check Devroye's paper to fix it! This is a neat little algorithm and certainly much easier to implement than the 'gold standard' algorithm of

@@ -15,11 +15,11 @@ end
 ; https://stackoverflow.com/questions/23561551/a-efficient-binomial-random-number-generator-code-in-java#23574723
 to-report random-binomial [n p]
   ;; check this, but ...
-  if p > 1 [ print "WARNING: random-binomial p > 1" ]
-  if p < 0 [ print "WARNING: random-binomial p < 0" ]
+  ;; if p > 1 [ print "WARNING: random-binomial p > 1" ]
+  ;; p < 0 [ print "WARNING: random-binomial p < 0" ]
   ;; ... forgive it!
-  if p >= 1 [ report n ]
-  if p <= 0 [ report 0 ]
+  if p = 1 [ report n ]
+  if p = 0 [ report 0 ]
   let ln-q ln (1 - p)
   let x 0
   let s 0
