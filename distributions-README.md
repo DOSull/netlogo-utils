@@ -1,4 +1,4 @@
-# `distributions-utils.nls` documentation
+# distributions-utils.nls documentation
 This document is intended to provide a guide to usage of the functions provided in the file `distribution-utils.nls`.
 
 ## Purpose
@@ -13,10 +13,10 @@ Put `distribution-utils.nls` in the same folder as your model. Then at the begin
 __includes["distribution-utils.nls"]
 ```
 
-All the listed reporters and/or procedures will then be available in your model code. Alternatively, just copy and past the code you need into your model (if you do this, it would be nice to also include the license information in your model code).
+All the listed reporters and/or procedures will then be available in your model code. Alternatively, just copy and paste the code you need into your model (if you do this, it would be nice to also include the license information in your model code).
 
 ## Reporters
-### `random-binomial`
+### random-binomial
 **random-binomial** _n_ _p_
 
 Returns a random binomial deviate _B(n, p)_. For small numbers of random binomial deviates, you could use
@@ -40,22 +40,22 @@ https://stackoverflow.com/questions/23561551/a-efficient-binomial-random-number-
 
 To see just how much more complicated that algorithm is see the [_R_ implementation](https://github.com/SurajGupta/r-source/blob/master/src/nmath/rbinom.c). If you get around to implementing it in NetLogo, be sure to let me know!
 
-### `random-cauchy`
+### random-cauchy
 **random-cauchy** _location_ _scale_
 
 Reports a Cauchy distributed random variate from Cauchy distribution with location parameter _location_ and scale parameter _scale_. See this wikipedia entry for the [Cauchy distribution](https://en.wikipedia.org/wiki/Cauchy_distribution).
 
-### `random-gamma-with-mean-sd`
+### random-gamma-with-mean-sd
 **random-gamma-with-mean-sd** _mean_ _sd_
 
 Reports a Gamma distributed random variate from the the Gamma distributed with mean _mean_ and standard-deviation _sd_.
 
-### `random-lognormal`
+### random-lognormal
 **random-lognormal** _mean_ _sd_
 
 Reports a lognormal distributed random variate with mean _mean_ and standard deviation _sd_.
 
-### `random-multinomial`
+### random-multinomial
 **random-multinomial** _n_ _list_ _simple-frequencies?_
 
 See [`random-multinomial-int`](#random-multinomial-int) for an explanation of the basic operation of this reporter. This version of the multinomial reporter allows floating-point relative frequencies. Depending on _simple-frequencies?_ the reported list of frequencies may be either simple relative frequencies (when _simple-frequencies?_ is `true`) or precomputed serial conditional probabilities (when _simple-frequencies?_ is `false`).
@@ -77,7 +77,7 @@ Use `random-multinomial`
 
 There are some situations requiring multinomial distributions where the functions in the [NetLogo `rnd` extension](https://ccl.northwestern.edu/netlogo/docs/) may be preferable to this lower-level reporter.
 
-### `random-multinomial-int`
+### random-multinomial-int
 **random-multinomial-int** _n_ _frequencies_
 
 Takes a list of frequencies _frequencies_ and generates a list of length _n_ where each item in the list represents the number of times that position has been drawn. For example `random-multinomial-int 100 [1 2 3 4]` might generate the result `[12 27 23 38]`.
@@ -104,25 +104,27 @@ The implementation uses [`dists-cumulative-remainder`](#dists-cumulative-remaind
 
 There are some situations requiring multinomial distributions where the functions in the [NetLogo `rnd` extension](https://ccl.northwestern.edu/netlogo/docs/) may be preferable to this lower-level reporter.
 
-### `random-negative-binomial`
+### random-negative-binomial
 **random-negative-binomial** _r_ _p_
 
 Reports a random negative binomial variate from _NBin(r, p)_. Implementation is by a random Poisson parameterised with a Gamma distributed variate as described [here](https://en.wikipedia.org/wiki/Negative_binomial_distribution#Gamma%E2%80%93Poisson_mixture).
 
-### `random-negative-binomial-with-mean-vmr`
+### random-negative-binomial-with-mean-vmr
 **random-negative-binomial-with-mean-vmr** _mean_ _vmr_
 
 Reports a random negative binomial variate from a distribution with specified mean _mean_ and variance mean ratio _vmr_. _vmr_ must be 1 or greater. This provides an alternative to the Poisson distribution that is over-dispersed for situations where greater variability is required in a sequence of random integers.
 
-### `random-weibull`
+### random-weibull
  **random-weibull** _shape_ _scale_ _lower-limit_ _upper-limit_
 
 Reports a Weibull distributed random variate with shape parameter _shape_ and scale parameter _scale_ bounded to the range from _lower-limit_ (inclusive) to _upper-limit_ (exclusive). This reporter will perform poorly if the lower and upper limits provided include only a low total probability, since the the limit is satisfied by repeated draws until a value meets the range criterion specified. See this wikipedia entry for the [Weibull distribution](https://en.wikipedia.org/wiki/Weibull_distribution).
 
+---
+
 ## Helper reporters specific to `distribution-utils.nls`
 These aren't really intended to be used by an end-user, but since there is no ability to make reporters 'private' in NetLogo, it's best to document them anyway.
 
-### `conditional-probabilities`
+### conditional-probabilities
 **conditional-probabilities** _frequencies_
 
 This reporter returns a serial set of conditional probabilities derived from the supplied list of simple relative frequencies. The returned list will be a series of values [n_i / sum_i^N n_i]. For example
@@ -134,12 +136,12 @@ This reporter returns a serial set of conditional probabilities derived from the
 
 Floating point division problems occasionally cause the final value in the list to not equal 1, when it always should do, so this expectation is enforced in the code, meaning that there may be small errors where very small marginal probabilities are involved.
 
-### `conditional-probabilities-with-forcing`
+### conditional-probabilities-with-forcing
 **conditional-probabilities-with-forcing** _frequencies_
 
 A version of [`conditional-probabilities`](#conditional-probabilities) suitable for floating point _frequencies_ when arithmentic inaccuracies may cause the last non-zero conditional probability not to be 1. This condition is enforced by this reporter.
 
-### `cumulative-remainder`
+### cumulative-remainder
 **dists-cumulative-remainder** _list_
 
 Reports a list of the sum of the remaining values in _list_ at each position, that is `[sum_i^N x_i]` where N is the length of the list, for example:
@@ -147,20 +149,22 @@ Reports a list of the sum of the remaining values in _list_ at each position, th
     dists-cumulative-remainder [1 2 3 4 5]
     > [15 14 12 9 5]
 
-### `population-standard-deviation`
+### population-standard-deviation
 **population-standard-deviation** _list_
 
 Reports the population standard deviation of the values in _list_. (The native NetLogo reporter `standard-deviation` reports the sample SD.)
 
-### `population-variance`
+### population-variance
 **population-variance** _list_
 
 Reports the population variance of the values in _x_. (The native NetLogo reporter `variance` reports the sample variance.)
 
-## Helper reporters also available in other `-utils.nls` files
-These reporters are also provided in other utilties files, but a 'local' copy with the prefix `dists-` means you can include all the `.nls` files in as single model if you wish.
+---
 
-### `dists-cumulative-sum`
+## Helper reporters also available in other `-utils.nls` files
+These reporters are also provided in other utilties files, but a 'local' copy with the prefix `dists-` means you can include all the `.nls` files in a single model if you wish.
+
+### dists-cumulative-sum
 **dists-cumulative-sum** _list_
 
 Reports a list of the cumulative sum of the supplied list _list_, that is `[sum_0^i x_i]`, for example:
@@ -168,10 +172,10 @@ Reports a list of the cumulative sum of the supplied list _list_, that is `[sum_
     dists-cumulative-sum [1 2 3 4 5]
     > [1 3 6 10 15]
 
-### `dists-last-position`
+### dists-last-position
 **dists-last-position** _x_ _list_
 Reports the list index of the last occurrence of the value _x_ in list _list_.
 
-### `last-positive`
+### last-positive
 **last-positive** _list_
 Reports the list index of the last occurrence of a positive (non-zero) value in the list _list_. Used by [`conditional-probabilities-with-forcing`](#conditional-probabilities-with-forcing).
