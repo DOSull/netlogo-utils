@@ -72,6 +72,8 @@ Use `random-multinomial` when you cannot provide relative frequencies as a list 
       ])
     ]
 
+There are some situations requiring multinomial distributions where the functions in the [NetLogo `rnd` extension](https://ccl.northwestern.edu/netlogo/docs/) may be preferable to this lower-level reporter.
+
 ### `random-multinomial-int`
 **random-multinomial-int** _n_ _frequencies_
 
@@ -96,6 +98,8 @@ The required serial conditional probabilities are obtained by calling
     conditional-probabilities _frequencies_
 
 The implementation uses [`dists-cumulative-remainder`](#dists-cumulative-remainder).
+
+There are some situations requiring multinomial distributions where the functions in the [NetLogo `rnd` extension](https://ccl.northwestern.edu/netlogo/docs/) may be preferable to this lower-level reporter.
 
 ### `random-negative-binomial`
 **random-negative-binomial** _r_ _p_
