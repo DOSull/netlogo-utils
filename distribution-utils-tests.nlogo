@@ -507,7 +507,7 @@ NIL
 This document is intended to provide a guide to usage of the functions provided in the file `distribution-utils.nls`.
 
 ## Purpose
-`distribution-utils.nls` provides convenient implementations of commonly used random probability distributions beyond `random`, `random-float`, `random-normal`, `random-poisson` and `random-gamma` provided natively in NetLogo.
+`distribution-utils.nls` provides convenient implementations of commonly used random probability distributions beyond `random`, `random-float`, `random-normal`, `random-poisson`, `random-exponential` and `random-gamma` provided natively in NetLogo.
 
 Because the random number reporters in `distribution-utils.nls` are implemented in NetLogo, they are convenient to use, but more efficient implementations may require you to develop an extension to wrap a library such as [CERN's COLT](https://dst.lbl.gov/ACSSoftware/colt/api/index.html), or perhaps to use the random generators available in _R_ via Netlogo's `r` extension. But before going to that trouble, you can use these and find out if you really need any of these distributions at all!
 
