@@ -63,7 +63,7 @@ end
 to-report conditional-probabilities [frequencies]
   report (map [ [f s] -> ifelse-value (s > 0) [f / s] [0] ]
                 frequencies
-                dists-cumulative-remainder frequencies)
+                cumulative-remainder frequencies)
 end
 
 
@@ -83,7 +83,7 @@ end
 to-report conditional-probabilities-with-forcing [frequencies]
   let c-p (map [ [f s] -> ifelse-value (s > 0) [f / s] [0] ]
                 frequencies
-                dists-cumulative-remainder frequencies)
+                cumulative-remainder frequencies)
   report replace-item (last-positive c-p) c-p 1
 end
 
@@ -100,7 +100,7 @@ end
 ;; for a list [x_i] returns [sum_i..n x_i]
 ;; e.g. 1 2 3 4 5 6 --> 21 20 18 15 11 6
 ;; same as reverse dists-cumulative-sum reverse L
-to-report dists-cumulative-remainder [L]
+to-report cumulative-remainder [L]
   report but-last reduce [ [a b] -> lput (last a - b) a ] fput (list sum L) L
 end
 

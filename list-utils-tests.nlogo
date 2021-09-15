@@ -1,29 +1,26 @@
-__includes ["distributions.nls"]
+__includes [ "list-utils.nls" ]
 
-patches-own [
-  value
-  weight
+globals [
+  example
+  next-value
 ]
 
-to colour-patches [value?]
-  let mn min [ifelse-value value? [value] [weight]] of patches
-  let mx max [ifelse-value value? [value] [weight]] of patches
-  ask patches [
-    set pcolor scale-color blue (ifelse-value value? [value] [weight]) mx mn
-;    set plabel-color orange
-;    set plabel ifelse-value value? [precision value 3] [precision weight 3]
-  ]
+to setup
+  clear-all
+  set example []
+  output-print example
+  reset-ticks
+  go
 end
 
-to update-displays [value?]
-  colour-patches value?
-  set-current-plot "Distribution"
-  set-current-plot-pen "histogram"
-  set-plot-x-range floor min [value] of patches ceiling max [value] of patches
-  set-plot-y-range 0 1
-  set-histogram-num-bars 15
-  histogram [value] of patches
+to go
+  set next-value random 100
+  clear-output
+  output-print example
+  tick
 end
+
+
 
 ; The MIT License (MIT)
 ;;
@@ -49,13 +46,13 @@ end
 ;; DEALINGS IN THE SOFTWARE.
 @#$#@#$#@
 GRAPHICS-WINDOW
-12
-10
-420
-419
+646
+394
+687
+436
 -1
 -1
-5.0
+1.0
 1
 10
 1
@@ -65,53 +62,30 @@ GRAPHICS-WINDOW
 1
 1
 1
-0
-79
-0
-79
+-16
+16
+-16
+16
 0
 0
 1
 ticks
 30.0
 
-SLIDER
-617
-13
-804
-46
-number-of-draws
-number-of-draws
-0
-1000
-99.0
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-617
-51
-804
-84
-probability
-probability
-0
-1
-0.1163
-0.0001
-1
-NIL
-HORIZONTAL
+OUTPUT
+105
+17
+345
+71
+12
 
 BUTTON
-450
-13
-575
-46
-test-binomial
-ask patches [\n  set value random-binomial number-of-draws probability\n]\nupdate-displays true
+19
+26
+92
+59
+NIL
+setup
 NIL
 1
 T
@@ -121,377 +95,25 @@ NIL
 NIL
 NIL
 1
-
-BUTTON
-449
-96
-596
-129
-test-multinomial
-ask patches [\n  set weight random-poisson multinomial-mean\n]\nlet weights map [p -> [weight] of p] sort patches\nlet values random-multinomial-int (count patches * number-of-draws) weights\n(foreach sort patches values [ [p v] ->\n  ask p [set value v]\n]) \nupdate-displays colour-by-value?\n
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-SWITCH
-216
-447
-388
-480
-colour-by-value?
-colour-by-value?
-0
-1
--1000
-
-BUTTON
-38
-447
-193
-480
-recolour-patches
-colour-patches colour-by-value?
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-448
-189
-582
-222
-test-nbinomial
-ask patches [\n  set value random-negative-binomial n-failures probability\n]\nupdate-displays true
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-SLIDER
-619
-186
-791
-219
-n-failures
-n-failures
-1
-100
-48.0
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-618
-278
-819
-311
-variance-mean-ratio
-variance-mean-ratio
-1
-10
-3.9
-0.01
-1
-NIL
-HORIZONTAL
-
-BUTTON
-447
-231
-583
-264
-test-nbinom-vmr
-ask patches [\n  set value random-negative-binomial-with-mean-vmr mean-result variance-mean-ratio\n]\nupdate-displays true
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-SLIDER
-619
-237
-791
-270
-mean-result
-mean-result
-1
-100
-24.96
-0.01
-1
-NIL
-HORIZONTAL
 
 MONITOR
-14
-510
-109
-555
-mean
-mean [value] of patches
-5
-1
-11
-
-MONITOR
-14
-561
-109
-606
-variance
-variance [value] of patches
-5
-1
-11
-
-PLOT
-119
-489
-441
-690
-Distribution
-Value
-Frequency
-0.0
-10.0
-0.0
-10.0
-true
-false
-"" ""
-PENS
-"histogram" 1.0 1 -16777216 true "" ""
-
-SLIDER
-616
-374
-788
-407
-scale
-scale
-0.0001
-10
-1.274
-0.0001
-1
+360
+22
+440
+67
 NIL
-HORIZONTAL
-
-BUTTON
-449
-330
-565
-363
-test-cauchy
-ask patches [\n  set value random-cauchy location scale\n]\nupdate-displays true
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-SLIDER
-618
-324
-790
-357
-location
-location
--100
-100
-0.0
-0.1
-1
-NIL
-HORIZONTAL
-
-BUTTON
-447
-421
-561
-454
-test-weibull
-ask patches [\n  set value random-weibull scale the-shape 0 100\n]\nupdate-displays true
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-SLIDER
-618
-424
-790
-457
-the-shape
-the-shape
+next-value
 0
-25
-2.39
-0.01
-1
-NIL
-HORIZONTAL
-
-BUTTON
-446
-491
-564
-524
-test-gamma
-ask patches [\n  set value random-gamma-with-mean-sd gamma-mean gamma-sd\n]\nupdate-displays true
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-SLIDER
-618
-488
-790
-521
-gamma-mean
-gamma-mean
-0
-10
-5.0
-0.01
-1
-NIL
-HORIZONTAL
-
-SLIDER
-617
-530
-789
-563
-gamma-sd
-gamma-sd
-0
-10
-6.051
-0.001
-1
-NIL
-HORIZONTAL
-
-MONITOR
-14
-613
-107
-658
-sd
-population-standard-deviation [ifelse-value colour-by-value? [value] [weight]] of patches
-5
 1
 11
 
 BUTTON
-449
-604
-585
-637
-test-lognormal
-ask patches [\n  set value random-lognormal log-mean log-sd\n]\nupdate-displays true
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-SLIDER
-622
-591
-794
-624
-log-mean
-log-mean
-0.01
-10
-0.96
-0.01
-1
-NIL
-HORIZONTAL
-
-SLIDER
-625
-643
-797
-676
-log-sd
-log-sd
-0
-2
-0.39
-0.01
-1
-NIL
-HORIZONTAL
-
-SLIDER
-621
-104
-818
-137
-multinomial-mean
-multinomial-mean
-0.1
-100
-28.1
-0.1
-1
-NIL
-HORIZONTAL
-
-BUTTON
-451
-143
-605
-176
-test-multinomial-float
-ask patches [\n  set weight random-exponential multinomial-mean\n]\nlet weights map [p -> [weight] of p] sort patches\nlet values random-multinomial (count patches * number-of-draws) weights true\n(foreach sort patches values [ [p v] ->\n  ask p [set value v]\n]) \nupdate-displays colour-by-value?\n
+23
+91
+200
+124
+insert-value-in-order
+set example insert-value-in-order example next-value\ngo
 NIL
 1
 T
