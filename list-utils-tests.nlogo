@@ -1,22 +1,71 @@
 __includes [ "list-utils.nls" ]
 
 globals [
-  example
+  the-list
   next-value
 ]
 
 to setup
   clear-all
-  set example []
-  output-print example
+  set the-list []
   reset-ticks
   go
 end
 
 to go
-  set next-value random 100
   clear-output
-  output-print example
+
+  let old-list the-list
+  set the-list insert-value-in-order the-list next-value
+  let shuffled shuffle the-list
+
+  output-print join-list (list "insert-value-in-order" old-list next-value "\n>"
+                                the-list "\n") " "
+
+  output-print join-list (list "cumulative-sum" the-list "\n>"
+                                cumulative-sum the-list "\n") " "
+
+  output-print join-list (list "insert-values-in-order" the-list (cumulative-sum the-list) "\n>"
+                                insert-values-in-order the-list cumulative-sum the-list "\n") " "
+
+  if length the-list > 1 [
+    let split min the-list + random (max the-list - min the-list)
+    output-print join-list (list "split-list-at-value" the-list split "\n>"
+                                  split-list-at-value the-list split "\n") " "
+  ]
+
+  output-print join-list (list "zip" the-list cumulative-sum the-list "\n>"
+                                zip the-list cumulative-sum the-list "\n") " "
+
+  if length the-list > 0 [
+    output-print join-list (list "unzip" zip the-list cumulative-sum the-list "\n>"
+                                  unzip zip the-list cumulative-sum the-list "\n") " "
+  ]
+
+  if length the-list > 0 [
+    let number one-of modes the-list
+    output-print join-list (list "last-position" number shuffled "\n>"
+                                  last-position number shuffled "\n") " "
+  ]
+
+  if length the-list > 0 [
+    let number one-of modes the-list
+    output-print join-list (list "matches" number shuffled "\n>"
+                                  matches number shuffled "\n") " "
+  ]
+
+  if length the-list > 0 [
+    let number one-of modes the-list
+    output-print join-list (list "matching-positions" number shuffled "\n>"
+                                  matching-positions number shuffled "\n") " "
+  ]
+
+  if length the-list > 0 [
+    output-print join-list (list "join-list" the-list "\",\"" "\n>"
+                                  join-list the-list "," "\n") " "
+  ]
+
+  set next-value random 10
   tick
 end
 
@@ -46,10 +95,10 @@ end
 ;; DEALINGS IN THE SOFTWARE.
 @#$#@#$#@
 GRAPHICS-WINDOW
-646
-394
-687
-436
+766
+10
+807
+52
 -1
 -1
 1.0
@@ -73,11 +122,11 @@ ticks
 30.0
 
 OUTPUT
-105
-17
-345
-71
-12
+11
+79
+812
+653
+14
 
 BUTTON
 19
@@ -97,10 +146,10 @@ NIL
 1
 
 MONITOR
-360
-22
-440
-67
+110
+19
+190
+64
 NIL
 next-value
 0
@@ -108,12 +157,12 @@ next-value
 11
 
 BUTTON
-23
-91
 200
-124
+25
+377
+58
 insert-value-in-order
-set example insert-value-in-order example next-value\ngo
+go
 NIL
 1
 T
@@ -122,44 +171,128 @@ NIL
 NIL
 NIL
 NIL
-1
+0
 
 @#$#@#$#@
-## WHAT IS IT?
+# list-utils.nls documentation
+This document is intended to provide a guide to usage of the functions provided in the file `list-utils.nls`.
 
-(a general understanding of what the model is trying to show or explain)
+## Purpose
+`list-utils.nls` provides convenient implementations of many functions for lists in NetLogo.
 
-## HOW IT WORKS
+Because the reporters in `list-utils.nls` are implemented in NetLogo, they are convenient to use, but if you find yourself using any of the operations a lot, it might make sense to consider writing an extension.
 
-(what rules the agents use to create the overall behavior of the model)
+## Usage
+Put `list-utils.nls` in the same folder as your model. Then at the beginning of your model code include the line
 
-## HOW TO USE IT
+```
+__includes["list-utils.nls"]
+```
 
-(how to use the model, including a description of each of the items in the Interface tab)
+All the listed reporters and/or procedures will then be available in your model code. Alternatively, just copy and paste the code you need into your model (if you do this, it would be nice to also include the license information in your model code).
 
-## THINGS TO NOTICE
+## Reporters
+### cumulative-sum
+**cumulative-sum** _list_
 
-(suggested things for the user to notice while running the model)
+Reports a list of the cumulative sums of _list_. For example
 
-## THINGS TO TRY
+    cumulative-sum [0 0 4 6 9]
+    > [0 0 4 10 19]
 
-(suggested things for the user to try to do (move sliders, switches, etc.) with the model)
+### insert-value-in-order
+**insert-value-in-order** _list_ _x_
 
-## EXTENDING THE MODEL
+Reports a new list with the value _x_ inserted in the list _list_ in order. For example
 
-(suggested things to add or change in the Code tab to make the model more complicated, detailed, accurate, etc.)
+    insert-value-in-order [0 0 4 9] 6
+    > [0 0 4 6 9]
 
-## NETLOGO FEATURES
+It is assumed that _list_ is already in ascending order (which can be ensured by only using `insert-value-in-order` or `insert-values-in-order` to maintain the list). This is convenient if it is necessary to maintain a sorted list of values because repeatedly calling the `sort` reporter can be slow.
 
-(interesting or unusual features of NetLogo that the model uses, particularly in the Code tab; or where workarounds were needed for missing features)
+### insert-values-in-order
+**insert-values-in-order** _list1_ _list2_
 
-## RELATED MODELS
+Reports a new list with the values from _list1_ and _list2_ merged in order. It is assumed that the lists are already in ascending order (which can be ensured by only using `insert-value-in-order` or `insert-values-in-order` to maintain the lists).
 
-(models in the NetLogo Models Library and elsewhere which are of related interest)
+### join-list _list_ _separator_
+**join-list** _list_ _separator_
 
-## CREDITS AND REFERENCES
+Reports a string formed by joining NetLogo string equivalents of the items in _list_ and inserting the string _seperator_ between items. For example
 
-(a reference to the model's URL on the web if it has one, as well as any other necessary credits, citations, and links)
+    join-list [0 2 6 6 7 9] ","
+    > 0,2,6,6,7,9
+
+### last-position
+**last-position** _x_ _list_
+
+Reports the last position of the value _x_ in list _list_. For example
+
+    last-position 6 [6 0 9 6 7 2]
+    > 3  
+
+_list_ is **not** assumed to be in any order---the result is reported for the list as-is.  
+
+### matches
+**matches** _x_ _list_
+
+Reports a list of booleans of the same length as _list_ where items are true if the corresponding position in _list_ equals the value _x_ and false otherwise.
+
+    matches 6 [6 0 9 6 7 2]
+    > [true false false true false false]
+
+_list_ is **not** assumed to be in any order---the result is reported for the list as-is.
+
+### matching-positions
+**matching-positions** _x_ _list_
+
+Reports a list of the index positions in _list_ where the item equals the value _x_.
+
+    matching-positions 6 [6 0 9 6 7 2]
+    > [0 3]
+
+If no matches are found reports an empty list `[]`. _list_ is **not** assumed to be in any order---the result is reported for the list as-is.
+
+### split-list-at-value
+**split-list-at-value** _list_ _value_
+
+Reports a list of two lists, where all items in the first list are (strictly)  &lt; _value_ and all items in the second list are &ge; _value_. For example
+
+    split-list-at-value [0 2 3 7 8] 6
+    > [[0 2 3] [7 8]]
+    split-list-at-value [0 2 3 7 8] 3
+    > [[0 2] [3 7 8]]
+
+It is assumed that _list_ is already in ascending order (which can be ensured by only using `insert-value-in-order` or `insert-values-in-order` to maintain the list).
+
+### transpose _list_
+**transpose** _list_
+
+Takes a list of lists input _list_ and reports a 'transposed' list of lists, where each list consists of all the items at a given position in the lists in _list_. This is most easily understood by examples
+
+    transpose [[0 1 2] [3 4 5]]
+    > [[0 3] [1 4] [2 5]]
+    transpose [[0 3] [1 4] [2 5]]
+    > [[0 1 2] [3 4 5]]
+
+The lists in _list_ are assumed to all be the same length as the first list. If any are longer, items beyond the length of the first list will be lost. If any list is shorter it will cause a crash.
+
+Note that the effect of `transpose L` and of `zip item 0 L item 1 L` is identical. The difference is that [`zip`](#zip) is more convenient when only two lists are being combined.
+
+### unzip
+**unzip** _list_
+
+This reporter reverses the effect of `zip` returning a list of the original two lists. `unzip` works by calling [`transpose`](#transpose) (it is effectively an alias for `transpose`).
+
+### zip
+**zip** _list1_ _list2_
+
+Pairs corresponing items from _list1_ and _list2_ into a list of lists of length 2, where item 0 is from _list1_ and item 1 is from _list2_. For example
+
+    zip [0 2 3 7 8] [0 2 5 12 20]
+    > [[0 0] [2 2] [3 5] [7 12] [8 20]]
+
+_list1_ and _list2_ must be the same length. The same effect can be obtained using [`transpose`](#transpose) by calling `transpose (list list1 list2)`, so `zip` is effectively a convenience wrapper for `transpose` when only two lists are involved.
 @#$#@#$#@
 default
 true
@@ -466,7 +599,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.2.0
+NetLogo 6.1.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@

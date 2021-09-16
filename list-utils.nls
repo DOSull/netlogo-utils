@@ -17,7 +17,8 @@ to-report split-list-at-value [L x] ;; assume list is ordered
 end
 
 to-report zip [list1 list2]
-  report (map [[a b] -> (list a b)] list1 list2)
+  report transpose (list list1 list2)
+;  report (map [[a b] -> (list a b)] list1 list2)
 end
 
 to-report unzip [lists]
@@ -30,17 +31,21 @@ to-report transpose [lists]
 end
 
 to-report last-position [x L]
-  report length L - position true reverse matching-positions x L - 1
+  report length L - (position true (reverse matches x L)) - 1
+end
+
+to-report matches [x L]
+  report map [y -> x = y] L
 end
 
 to-report matching-positions [x L]
-  report map [y -> x = y] L
+  let positions n-values length L [i -> i]
+  report filter [i -> item i L = x] positions
 end
 
 to-report join-list [lst sep]
   report reduce [ [a b] -> (word a sep b) ] lst
 end
-
 
 ;; The MIT License (MIT)
 ;;
