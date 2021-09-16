@@ -1,10 +1,12 @@
 # distributions-utils.nls documentation
 This document is intended to provide a guide to usage of the functions provided in the file `distribution-utils.nls`.
 
+
 ## Purpose
 `distribution-utils.nls` provides convenient implementations of commonly used random probability distributions beyond `random`, `random-float`, `random-normal`, `random-poisson`, `random-exponential` and `random-gamma` provided natively in NetLogo.
 
 Because the random number reporters in `distribution-utils.nls` are implemented in NetLogo, they are convenient to use, but more efficient implementations may require you to develop an extension to wrap a library such as [CERN's COLT](https://dst.lbl.gov/ACSSoftware/colt/api/index.html), or perhaps to use the random generators available in _R_ via Netlogo's `r` extension. But before going to that trouble, you can use these and find out if you really need any of these distributions at all!
+
 
 ## Usage
 Put `distribution-utils.nls` in the same folder as your model. Then at the beginning of your model code include the line
@@ -14,6 +16,7 @@ __includes["distribution-utils.nls"]
 ```
 
 All the listed reporters and/or procedures will then be available in your model code. Alternatively, just copy and paste the code you need into your model (if you do this, it would be nice to also include the license information in your model code).
+
 
 ## Reporters
 ### random-binomial
@@ -121,7 +124,6 @@ Reports a random negative binomial variate from a distribution with specified me
 
 Reports a Weibull distributed random variate with shape parameter _shape_ and scale parameter _scale_ bounded to the range from _lower-limit_ (inclusive) to _upper-limit_ (exclusive). This reporter will perform poorly if the lower and upper limits provided include only a low total probability, since the the limit is satisfied by repeated draws until a value meets the range criterion specified. See this wikipedia entry for the [Weibull distribution](https://en.wikipedia.org/wiki/Weibull_distribution).
 
----
 
 ## Helper reporters specific to `distribution-utils.nls`
 These aren't really intended to be used by an end-user, but since there is no ability to make reporters 'private' in NetLogo, it's best to document them anyway.
@@ -161,7 +163,6 @@ Reports the population standard deviation of the values in _list_. (The native N
 
 Reports the population variance of the values in _x_. (The native NetLogo reporter `variance` reports the sample variance.)
 
----
 
 ## Helper reporters also available in other `-utils.nls` files
 These reporters are also provided in other utilties files, but a 'local' copy with the prefix `dists-` means you can include all the `.nls` files in a single model if you wish.
@@ -176,8 +177,10 @@ Reports a list of the cumulative sum of the supplied list _list_, that is `[sum_
 
 ### dists-last-position
 **dists-last-position** _x_ _list_
+
 Reports the list index of the last occurrence of the value _x_ in list _list_.
 
 ### last-positive
 **last-positive** _list_
+
 Reports the list index of the last occurrence of a positive (non-zero) value in the list _list_. Used by [`conditional-probabilities-with-forcing`](#conditional-probabilities-with-forcing).
