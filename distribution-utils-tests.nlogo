@@ -658,6 +658,11 @@ Reports a list of the sum of the remaining values in _list_ at each position, th
     dists-cumulative-remainder [1 2 3 4 5]
     > [15 14 12 9 5]
 
+### last-positive
+**last-positive** _list_
+
+Reports the list index of the last occurrence of a positive (non-zero) value in the list _list_. Used by [`conditional-probabilities-with-forcing`](#conditional-probabilities-with-forcing).
+
 ### population-standard-deviation
 **population-standard-deviation** _list_
 
@@ -684,11 +689,6 @@ Reports a list of the cumulative sum of the supplied list _list_, that is `[sum_
 **dists-last-position** _x_ _list_
 
 Reports the list index of the last occurrence of the value _x_ in list _list_.
-
-### last-positive
-**last-positive** _list_
-
-Reports the list index of the last occurrence of a positive (non-zero) value in the list _list_. Used by [`conditional-probabilities-with-forcing`](#conditional-probabilities-with-forcing).
 @#$#@#$#@
 default
 true
