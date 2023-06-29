@@ -7,6 +7,12 @@ This document is intended to provide a guide to usage of the functions provided 
 
 Because the random number reporters in `distribution-utils.nls` are implemented in NetLogo, they are convenient to use, but more efficient implementations may require you to develop an extension to wrap a library such as [CERN's COLT](https://dst.lbl.gov/ACSSoftware/colt/api/index.html), or perhaps to use the random generators available in _R_ via Netlogo's `r` extension. But before going to that trouble, you can use these and find out if you really need any of these distributions at all!
 
+### **Warning!**
+I am not a statistician, mathematician, probability theorist, or numerical programmer. As such, the code for these utility reporters has been assembled from various sources (mainly wikipedia, but also others as specified below) and I cannot vouch for its strict numerical accuracy. The results _seem_ OK to me based on simple evaluations of histograms of results and similar 'tests'. If you need bullet-proof statistical distributions in your models, you may want to do more thorough checking of your own before using these utilities, or as suggested above incorporate _R_ code using the `r` extension. 
+
+This warning is in addition to the usual disclaimers about random code you find on the internet (even if I am a professor).
+
+Anyway, all that said...
 
 ## Usage
 Put `distribution-utils.nls` in the same folder as your model. Then at the beginning of your model code include the line

@@ -46,7 +46,7 @@ end
 ;; the standard nbin parameters are r and p
 to-report random-negative-binomial-with-mean-vmr [m vmr]
   let r m / (vmr - 1)
-  let p 1 - 1 / vmr
+  let p 1 / vmr
   report random-negative-binomial r p
 end
 
