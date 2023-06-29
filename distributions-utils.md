@@ -53,7 +53,7 @@ Reports a Cauchy distributed random variate from Cauchy distribution with locati
 ### random-gamma-with-mean-sd
 **random-gamma-with-mean-sd** _mean_ _sd_
 
-Reports a Gamma distributed random variate from the the Gamma distributed with mean _mean_ and standard-deviation _sd_.
+Reports a Gamma distributed random variate from the Gamma distribution with mean _mean_ and standard-deviation _sd_.
 
 ### random-lognormal
 **random-lognormal** _mean_ _sd_
@@ -71,15 +71,16 @@ Use `random-multinomial`
 
 + when you cannot provide relative frequencies as a list of integers (`random-multinomial-int` is faster), or
 + when the list of frequencies is fixed across many calls to the function. In this case do, for example
-
-    let weights [weight] of sort patches
-    let cond-probs conditional-probabilities-with-forcing repeat 1000 [
-      (foreach (sort patches) random-multinomial n cond-probs false [
+```
+let weights [weight] of sort patches
+let cond-probs conditional-probabilities-with-forcing weights
+repeat 1000 [
+    (foreach (sort patches) random-multinomial n cond-probs false [
         [p n] ->
-          ask p [ do-something-with n ]
-      ])
-    ]
-
+        ask p [ do-something-with n ]
+    ])
+]
+```
 There are some situations requiring multinomial distributions where the functions in the [NetLogo `rnd` extension](https://ccl.northwestern.edu/netlogo/docs/) may be preferable to this lower-level reporter.
 
 ### random-multinomial-int
@@ -103,7 +104,7 @@ Say this yields 34. The final draw will always have probabilty 1 and thus will y
 
 The required serial conditional probabilities are obtained by calling
 
-    conditional-probabilities _frequencies_
+    conditional-probabilities frequencies
 
 The implementation uses [`dists-cumulative-remainder`](#dists-cumulative-remainder).
 
@@ -131,7 +132,7 @@ These aren't really intended to be used by an end-user, but since there is no ab
 ### conditional-probabilities
 **conditional-probabilities** _frequencies_
 
-This reporter returns a serial set of conditional probabilities derived from the supplied list of simple relative frequencies. The returned list will be a series of values [n_i / sum_i^N n_i]. For example
+This reporter returns a serial set of conditional probabilities derived from the supplied list of simple relative frequencies. The returned list will be a series of values <i>n<sub>i</sub></i> / &Sigma;<i><sub>i</sub><sup>N</sup> n<sub>i</sub></i>. For example
 
     conditional-probabilities [1 1 1 1 1]
     > [0.2 0.25 0.333333 0.5 1]
@@ -148,7 +149,7 @@ A version of [`conditional-probabilities`](#conditional-probabilities) suitable 
 ### cumulative-remainder
 **dists-cumulative-remainder** _list_
 
-Reports a list of the sum of the remaining values in _list_ at each position, that is `[sum_i^N x_i]` where N is the length of the list, for example:
+Reports a list of the sum of the remaining values in _list_ at each position, that is &Sigma;<i><sub>i</sub><sup>N</sup> x<sub>i</sub></i> where N is the length of the list, for example:
 
     dists-cumulative-remainder [1 2 3 4 5]
     > [15 14 12 9 5]
@@ -175,7 +176,7 @@ These reporters are also provided in other utilties files, but a 'local' copy wi
 ### dists-cumulative-sum
 **dists-cumulative-sum** _list_
 
-Reports a list of the cumulative sum of the supplied list _list_, that is `[sum_0^i x_i]`, for example:
+Reports a list of the cumulative sum of the supplied list _list_, that is &Sigma;<i><sub>0</sub><sup>i</sup> n<sub>i</sub></i>, for example:
 
     dists-cumulative-sum [1 2 3 4 5]
     > [1 3 6 10 15]
