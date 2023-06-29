@@ -39,7 +39,7 @@ end
 ;; with a Gamma distributed variate per
 ;; https://en.wikipedia.org/wiki/Negative_binomial_distribution#Gamma%E2%80%93Poisson_mixture
 to-report random-negative-binomial [r p]
-  report random-poisson random-gamma r ((1 - p) / p)
+  report random-poisson random-gamma r (p / (1 - p))
 end
 
 ;; wrapper to get a negative binomial variate with mean m and variance mean ratio vmr
