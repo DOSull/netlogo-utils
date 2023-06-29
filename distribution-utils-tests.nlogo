@@ -512,6 +512,12 @@ This document is intended to provide a guide to usage of the functions provided 
 
 Because the random number reporters in `distribution-utils.nls` are implemented in NetLogo, they are convenient to use, but more efficient implementations may require you to develop an extension to wrap a library such as [CERN's COLT](https://dst.lbl.gov/ACSSoftware/colt/api/index.html), or perhaps to use the random generators available in _R_ via Netlogo's `r` extension. But before going to that trouble, you can use these and find out if you really need any of these distributions at all!
 
+### **Warning!**
+I am not a statistician, mathematician, probability theorist, or numerical programmer. As such, the code for these utility reporters has been assembled from various sources (mainly wikipedia, but also others as specified below) and I cannot vouch for its strict numerical accuracy. The results _seem_ OK to me based on simple evaluations of histograms of results and similar 'tests'. If you need bullet-proof statistical distributions in your models, you may want to do more thorough checking of your own before using these utilities, or as suggested above incorporate _R_ code using the `r` extension. 
+
+This warning is in addition to the usual disclaimers about random code you find on the internet (even if I am a professor).
+
+Anyway, all that said...
 
 ## Usage
 Put `distribution-utils.nls` in the same folder as your model. Then at the beginning of your model code include the line
@@ -558,7 +564,7 @@ Reports a Cauchy distributed random variate from Cauchy distribution with locati
 ### random-gamma-with-mean-sd
 **random-gamma-with-mean-sd** _mean_ _sd_
 
-Reports a Gamma distributed random variate from the the Gamma distributed with mean _mean_ and standard-deviation _sd_.
+Reports a Gamma distributed random variate from the Gamma distribution with mean _mean_ and standard-deviation _sd_.
 
 ### random-lognormal
 **random-lognormal** _mean_ _sd_
@@ -578,7 +584,7 @@ Use `random-multinomial`
 + when the list of frequencies is fixed across many calls to the function. In this case do, for example
 ```
 let weights [weight] of sort patches
-let cond-probs conditional-probabilities-with-forcing 
+let cond-probs conditional-probabilities-with-forcing weights
 repeat 1000 [
     (foreach (sort patches) random-multinomial n cond-probs false [
         [p n] ->
@@ -623,7 +629,7 @@ Reports a random negative binomial variate from _NBin(r, p)_. Implementation is 
 ### random-negative-binomial-with-mean-vmr
 **random-negative-binomial-with-mean-vmr** _mean_ _vmr_
 
-Reports a random negative binomial variate from a distribution with specified mean _mean_ and variance mean ratio _vmr_. _vmr_ must be 1 or greater. This provides an alternative to the Poisson distribution that is over-dispersed for situations where greater variability is required in a sequence of random integers.
+Reports a random negative binomial variate from a distribution with specified mean _mean_ and variance mean ratio _vmr_. _vmr_ must be strictly greater than 1. This provides an alternative to the Poisson distribution that is over-dispersed for situations where greater variability is required in a sequence of random integers.
 
 ### random-weibull
  **random-weibull** _shape_ _scale_ _lower-limit_ _upper-limit_

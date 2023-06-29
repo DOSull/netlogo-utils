@@ -124,7 +124,7 @@ Reports a random negative binomial variate from _NBin(r, p)_. Implementation is 
 ### random-negative-binomial-with-mean-vmr
 **random-negative-binomial-with-mean-vmr** _mean_ _vmr_
 
-Reports a random negative binomial variate from a distribution with specified mean _mean_ and variance mean ratio _vmr_. _vmr_ must be 1 or greater. This provides an alternative to the Poisson distribution that is over-dispersed for situations where greater variability is required in a sequence of random integers.
+Reports a random negative binomial variate from a distribution with specified mean _mean_ and variance mean ratio _vmr_. _vmr_ must be strictly greater than 1. This provides an alternative to the Poisson distribution that is over-dispersed for situations where greater variability is required in a sequence of random integers.
 
 ### random-weibull
  **random-weibull** _shape_ _scale_ _lower-limit_ _upper-limit_

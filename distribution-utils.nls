@@ -45,6 +45,12 @@ end
 ;; wrapper to get a negative binomial variate with mean m and variance mean ratio vmr
 ;; the standard nbin parameters are r and p
 to-report random-negative-binomial-with-mean-vmr [m vmr]
+  ;; if vmr = 1 then report poisson random variate
+  if vmr < 1 [ 
+    show "ERROR: vmr must be > 1" 
+    report -999
+  ]
+  if vmr = 1 [ report random-poisson m ]
   let r m / (vmr - 1)
   let p 1 / vmr
   report random-negative-binomial r p
