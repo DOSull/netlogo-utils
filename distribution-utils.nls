@@ -95,23 +95,18 @@ end
 
 
 to-report last-positive [L]
-  report last-position true (map [x -> x > 0] L)
-end
-
-to-report last-position [x L]
-  report length L - position x reverse L - 1
+  let positives map [x -> x > 0] L
+  report length positives - position true reverse positives - 1
+;  report last-position true (map [x -> x > 0] L)
 end
 
 
 ;; for a list [x_i] returns [sum_i..n x_i]
 ;; e.g. 1 2 3 4 5 6 --> 21 20 18 15 11 6
-;; same as reverse dists-cumulative-sum reverse L
+;; same result as reverse cumulative-sum reverse L
+;; using the cumulative-sum reporter from list-utils.nls
 to-report cumulative-remainder [L]
   report but-last reduce [ [a b] -> lput (last a - b) a ] fput (list sum L) L
-end
-
-to-report dists-cumulative-sum [L]
-  report but-first reduce [ [a b] -> lput (last a + b) a ] fput [0] L
 end
 
 

@@ -473,13 +473,13 @@ HORIZONTAL
 SLIDER
 621
 104
-818
+819
 137
 multinomial-mean
 multinomial-mean
 0.1
 100
-28.1
+63.8
 0.1
 1
 NIL
@@ -658,11 +658,11 @@ Floating point division problems occasionally cause the final value in the list 
 A version of [`conditional-probabilities`](#conditional-probabilities) suitable for floating point _frequencies_ when arithmentic inaccuracies may cause the last non-zero conditional probability not to be 1. This condition is enforced by this reporter.
 
 ### cumulative-remainder
-**dists-cumulative-remainder** _list_
+**cumulative-remainder** _list_
 
 Reports a list of the sum of the remaining values in _list_ at each position, that is &Sigma;<i><sub>i</sub><sup>N</sup> x<sub>i</sub></i> where N is the length of the list, for example:
 
-    dists-cumulative-remainder [1 2 3 4 5]
+    cumulative-remainder [1 2 3 4 5]
     > [15 14 12 9 5]
 
 ### last-positive
@@ -679,23 +679,6 @@ Reports the population standard deviation of the values in _list_. (The native N
 **population-variance** _list_
 
 Reports the population variance of the values in _x_. (The native NetLogo reporter `variance` reports the sample variance.)
-
-
-## Helper reporters also available in other `-utils.nls` files
-These reporters are also provided in other utilties files, but a 'local' copy with the prefix `dists-` means you can include all the `.nls` files in a single model if you wish.
-
-### dists-cumulative-sum
-**dists-cumulative-sum** _list_
-
-Reports a list of the cumulative sum of the supplied list _list_, that is &Sigma;<i><sub>0</sub><sup>i</sup> n<sub>i</sub></i>, for example:
-
-    dists-cumulative-sum [1 2 3 4 5]
-    > [1 3 6 10 15]
-
-### dists-last-position
-**dists-last-position** _x_ _list_
-
-Reports the list index of the last occurrence of the value _x_ in list _list_.
 @#$#@#$#@
 default
 true
