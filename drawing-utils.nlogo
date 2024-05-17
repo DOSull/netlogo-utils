@@ -1,77 +1,36 @@
+__includes [ "drawing-utils.nls" ]
+
+patches-own [x y z]
 
 to setup
   clear-all
   ask patches [
-    set pcolor (random 14) * 10 + random 5
+    set pcolor (random 14) * 10 + 4
+    set x random 10
+    set y random 6
+    set z random 2
   ]
-  repeat 20 [
+  repeat 40 [
     ask patches [
       set pcolor [pcolor] of one-of neighbors4
+      set x [x] of one-of neighbors4
+      set y [y] of one-of neighbors4
+      set z [z] of one-of neighbors4
     ]
   ]
   reset-ticks
 end
-
-
-to draw-borders [col]
-  ;; boundary patches are those with any neighbors4 that have
-  ;; different pcolor than themselves
-  let boundaries patches with [any? neighbors4
-    with [pcolor != [pcolor] of myself]
-  ]
-  ask boundaries [
-    ask neighbors4 [
-      ;; only those with different my-node need to draw a line
-      if pcolor != [pcolor] of myself [
-        draw-line-between self myself col
-      ]
-    ]
-  ]
-  tick
-end
-
-to-report get [var a1]
-  report runresult (word "[" var "] of " a1)
-end
-
-
-;; draw line between two patches
-;; by sprouting a turtle and having it move
-;; to halfway point and draw the edge
-to draw-line-between [p1 p2 col]
-  ;; set a visible colour
-  let pen-color col
-  ask p1 [
-    ;; make a turtle to do the drawing
-    sprout 1 [
-      set color pen-color
-      ;; move to the boundary
-      face p2
-      jump 0.5
-      ;; face the corner and move there
-      rt 90
-      jump 0.5
-      ;; turn around and draw the edge
-      rt 180
-      pd
-      jump 1
-      ;; and die...
-      die
-    ]
-  ]
-end
-
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
 10
-734
-535
+992
+793
 -1
 -1
-8.0
+6.0
 1
-10
+5
 1
 1
 1
@@ -79,10 +38,10 @@ GRAPHICS-WINDOW
 1
 1
 1
--32
-32
--32
-32
+-64
+64
+-64
+64
 1
 1
 1
@@ -104,6 +63,43 @@ NIL
 NIL
 NIL
 NIL
+1
+
+CHOOSER
+33
+153
+171
+198
+variable
+variable
+"pcolor" "x" "y" "z"
+0
+
+BUTTON
+45
+256
+163
+289
+draw-borders
+clear-drawing\nifelse variable = \"pcolor\"\n[ ask patches [set plabel \"\"] ]\n[ ask patches [set plabel runresult variable] ]\ndraw-borders-based-on-variable variable white
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+TEXTBOX
+25
+300
+175
+330
+Based on the variable in the dropdown
+12
+0.0
 1
 
 @#$#@#$#@
@@ -448,7 +444,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.2.0
+NetLogo 6.4.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@

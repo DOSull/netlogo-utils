@@ -1,0 +1,51 @@
+to draw-borders-based-on-variable [var col]
+  draw-boundaries (get-boundary-patches var) var col
+end
+
+to-report get-boundary-patches [var]
+  report runresult (word "patches with [any? neighbors4 with [" var " != [" var "] of myself]]")
+end
+
+to-report values-differ? [p1 p2 var]
+  report get var p1 != get var p2
+end
+
+to-report get [var p]
+  report runresult (word "[" var "] of p")
+end
+
+to draw-boundaries [boundary-patches var col]
+  ask boundary-patches [
+    ask neighbors4 [
+      if values-differ? myself self var [
+        draw-line-between self myself col
+      ]
+    ]
+  ]
+end
+
+;; draw line between two patches
+;; by sprouting a turtle and having it move
+;; to halfway point and draw the edge
+to draw-line-between [p1 p2 col]
+  ;; set a visible colour
+  let pen-color col
+  ask p1 [
+    ;; make a turtle to do the drawing
+    sprout 1 [
+      set color pen-color
+      ;; move to the boundary
+      face p2
+      jump 0.5
+      ;; face the corner and move there
+      rt 90
+      jump 0.5
+      ;; turn around and draw the edge
+      rt 180
+      pd
+      jump 1
+      ;; and die...
+      die
+    ]
+  ]
+end
