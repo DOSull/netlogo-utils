@@ -47,12 +47,22 @@ to-report join-list [lst sep]
   report reduce [ [a b] -> (word a sep b) ] lst
 end
 
-to-report rep-list [lst n each?]
+to-report rep-list [lst n inline?]
   if n < 1 [ report [] ]
   if n = 1 [ report lst ]
-  report reduce [[a b] -> sentence lst lst] n-values n [i -> i]
+  ifelse inline?
+  [ report rep-list-inline lst n ]
+  [ report rep-list-each lst n ]
 end
 
+to-report rep-list-each [lst n]
+  report reduce [[a b] -> sentence a b ] map [i -> n-values n [j -> i] ] lst
+end
+
+to-report rep-list-inline [lst n]
+  report reduce [[a b] -> sentence a b ] map [i -> lst] range n
+end
+  
 to-report range-from-to-by [start finish step]
   let n ceiling ((finish - start) / step)
   if (step * (finish - start)) < 0 [

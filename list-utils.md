@@ -115,6 +115,16 @@ Reports the list repeated _n_ times, either by  repeating the list _n_ times 'in
 
 `n` set to 0 will always return an empty list `[]`, and `n` set to 1 will return a copy of the original list. Negative values of `n` will cause an error. This reporter mimics base _R_'s `rep()` function (but with the sense of its boolean argument reversed). 
 
+### rep-list-each
+**rep-list-each** _lst_ _n_
+
+Convenience wrapper for [**rep-list**] _lst_ _n_ _false_.
+
+### rep-list-inline
+**rep-list-inline** _lst_ _n_
+
+Convenience wrapper for [**rep-list**] _lst_ _n_ _true_.
+
 ### split-list-at-value
 **split-list-at-value** _list_ _value_
 
