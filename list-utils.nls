@@ -47,6 +47,33 @@ to-report join-list [lst sep]
   report reduce [ [a b] -> (word a sep b) ] lst
 end
 
+to-report rep-list [lst n each?]
+  if n < 1 [ report [] ]
+  if n = 1 [ report lst ]
+  report reduce [[a b] -> sentence lst lst] n-values n [i -> i]
+end
+
+to-report range-from-to-by [start finish step]
+  let n ceiling ((finish - start) / step)
+  if (step * (finish - start)) < 0 [
+    print "***WARNING: step in sequence reporter is wrong sign. Returning empty list***"
+    report []
+  ]
+  ifelse finish > start
+  [ report n-values n [i -> start + step * i] ]
+  [ report n-values n [i -> start + step * i] ]
+end
+
+to-report range-from-to [start finish]
+  ifelse finish > start
+  [ report range-from-to-by start finish 1 ]
+  [ report range-from-to-by start finish -1 ]
+end
+
+to-report range-by [finish by]
+  report range-from-to-by 0 finish by
+end
+
 ;; The MIT License (MIT)
 ;;
 ;; Copyright (c) 2021 David O'Sullivan

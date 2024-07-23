@@ -77,6 +77,44 @@ Reports a list of the index positions in _list_ where the item equals the value 
 
 If no matches are found reports an empty list `[]`. _list_ is **not** assumed to be in any order---the result is reported for the list as-is.
 
+### range-by
+**range-by** _finish_ _by_
+
+Convenience wrapper for [**range-from-to-by**](#range-from-to-by) _0_ _finish_ _by_.
+
+### range-from-to-by
+**range-from-to-by** _start_ _finish_ _step_
+
+The **range-*** reporters are convenience wrappers for common usages of `n-values` to yield an evenly spaced sequence of values. The returned list starts with _start_, ends with the last value **strictly less than** _finish_, and proceed in steps of size _step_.
+
+    range-from-to-by 0 6 2
+    > [0 2 4]
+    range-from-to-by 1 6 2
+    > [1 3 5]
+    range-from-to-by 0 -6 -2
+    > [0 -2 -4 -6]
+
+If the sign of the step is incorrect for the _start_ and _finish_ values a warning will be reported and an empty list reported.
+
+The _exclusive_ end value behaviour demands close attention. The behaviour is similar to Python's `range()` function (hence the name of this reporter) and slicing operators, but _different_ from _R_'s `seq()` function.
+
+### range-from-to
+**range-from-to** _start_ _finish_
+
+Convenience wrapper for [**range-from-to-by**](#range-from-to-by) _start_ _finish_ 1.
+
+### rep-list 
+**rep-list** _list_ _n_ _inline?_
+
+Reports the list repeated _n_ times, either by  repeating the list _n_ times 'inline', or by repeating each list item _n_ times, i.e.,
+
+    rep-list [1 2 3] 3 true
+    > [1 2 3 1 2 3 1 2 3]
+    rep-list [1 2 3] 3 false
+    > [1 1 1 2 2 2 3 3 3]
+
+`n` set to 0 will always return an empty list `[]`, and `n` set to 1 will return a copy of the original list. Negative values of `n` will cause an error. This reporter mimics base _R_'s `rep()` function (but with the sense of its boolean argument reversed). 
+
 ### split-list-at-value
 **split-list-at-value** _list_ _value_
 

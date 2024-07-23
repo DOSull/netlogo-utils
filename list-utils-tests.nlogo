@@ -65,6 +65,11 @@ to go
                                   join-list the-list "," "\n") " "
   ]
 
+  if length the-list > 0 [
+    output-print join-list (list "rep-list" the-list 2 "\n>"
+                                  rep-list the-list 2 "\n") " "
+  ]
+
   set next-value random 10
   tick
 end
@@ -599,7 +604,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.1.0
+NetLogo 6.4.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
