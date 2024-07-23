@@ -118,12 +118,12 @@ Reports the list repeated _n_ times, either by  repeating the list _n_ times 'in
 ### rep-list-each
 **rep-list-each** _lst_ _n_
 
-Convenience wrapper for [**rep-list**] _lst_ _n_ _false_.
+Convenience wrapper for [**rep-list**](#rep-list) _lst_ _n_ _false_.
 
 ### rep-list-inline
 **rep-list-inline** _lst_ _n_
 
-Convenience wrapper for [**rep-list**] _lst_ _n_ _true_.
+Convenience wrapper for [**rep-list**](#rep-list) _lst_ _n_ _true_.
 
 ### split-list-at-value
 **split-list-at-value** _list_ _value_
