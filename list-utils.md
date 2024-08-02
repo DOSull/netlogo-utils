@@ -16,6 +16,16 @@ __includes["list-utils.nls"]
 All the listed reporters and/or procedures will then be available in your model code. Alternatively, just copy and paste the code you need into your model (if you do this, it would be nice to also include the license information in your model code).
 
 ## Reporters
+### cumulative-proportion
+**cumulative-proportion** _list_
+
+Reports a list of the cumulative share of the sum of _list_, i.e. $\sum_0^i x_i/\sum_0^n x_i$.
+
+    cumulative-sum [0 1 2 3 4]
+    > [0 0.1 0.3 0.6 1]
+
+If _list_ is empty reports `[1]` - be careful in this case!
+
 ### cumulative-sum
 **cumulative-sum** _list_
 
@@ -23,6 +33,8 @@ Reports a list of the cumulative sums of _list_. For example
 
     cumulative-sum [0 0 4 6 9]
     > [0 0 4 10 19]
+
+If _list_ is empty reports `[0]`.
 
 ### insert-value-in-order
 **insert-value-in-order** _list_ _x_
@@ -77,6 +89,14 @@ Reports a list of the index positions in _list_ where the item equals the value 
 
 If no matches are found reports an empty list `[]`. _list_ is **not** assumed to be in any order---the result is reported for the list as-is.
 
+### pairs
+**pairs** _list1_ _list2_
+
+Reports every pairwise combination of an item from _list1_ and _list2_ as a list of lists.
+
+    pairs [1 2 3] [4 5]
+    > [[1 4] [1 5] [2 4] [2 5] [3 4] [3 5]]
+
 ### range-by
 **range-by** _finish_ _by_
 
@@ -103,6 +123,14 @@ The _exclusive_ end value behaviour demands close attention. The behaviour is si
 
 Convenience wrapper for [**range-from-to-by**](#range-from-to-by) _start_ _finish_ 1.
 
+### ranks
+**ranks** _list_
+
+Reports the position of each item in _list_ in _list_'s sorted order
+
+    ranks [7 1 4 3]
+    > [3 0 2 1]
+
 ### rep-list 
 **rep-list** _list_ _n_ _inline?_
 
@@ -124,6 +152,16 @@ Convenience wrapper for [**rep-list**](#rep-list) _lst_ _n_ _false_.
 **rep-list-inline** _lst_ _n_
 
 Convenience wrapper for [**rep-list**](#rep-list) _lst_ _n_ _true_.
+
+### slice
+**slice** _list_ _indexes_
+
+Reports a list of items from _list_ at the index positions in _indexes_.
+
+    slice [1 2 3 4] [0 3]
+    > [1 4]
+
+**TODO:** Extend this to negative slices, etc.
 
 ### split-list-at-value
 **split-list-at-value** _list_ _value_
@@ -159,7 +197,7 @@ This reporter reverses the effect of `zip` returning a list of the original two 
 ### zip
 **zip** _list1_ _list2_
 
-Pairs corresponing items from _list1_ and _list2_ into a list of lists of length 2, where item 0 is from _list1_ and item 1 is from _list2_. For example
+Pairs corresponding items from _list1_ and _list2_ into a list of lists of length 2, where item 0 is from _list1_ and item 1 is from _list2_. For example
 
     zip [0 2 3 7 8] [0 2 5 12 20]
     > [[0 0] [2 2] [3 5] [7 12] [8 20]]

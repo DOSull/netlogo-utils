@@ -1,5 +1,11 @@
 ;; additional list utilities for Netlogo
 
+to-report cumulative-proportion [lst]
+  let s sum lst
+  if s = 0 [ report [1] ]
+  report map [x -> x / s] lst
+end
+
 to-report cumulative-sum [lst]
   report but-first reduce [ [a b] -> lput (last a + b) a] (fput [0] lst)
 end
@@ -12,22 +18,8 @@ to-report insert-values-in-order [L new]
   report reduce [ [a b] -> insert-value-in-order a b] (fput L new)
 end
 
-to-report split-list-at-value [L x] ;; assume list is ordered
-  report (list filter [v -> v < x] L filter [v -> v >= x] L)
-end
-
-to-report zip [list1 list2]
-  report transpose (list list1 list2)
-;  report (map [[a b] -> (list a b)] list1 list2)
-end
-
-to-report unzip [lists]
-  report transpose lists
-end
-
-to-report transpose [lists]
-  let indexes n-values length first lists [i -> i]
-  report map [i -> map [lst -> item i lst] lists] indexes
+to-report join-list [lst sep]
+  report reduce [ [a b] -> (word a sep b) ] lst
 end
 
 to-report last-position [x L]
@@ -43,8 +35,34 @@ to-report matching-positions [x L]
   report filter [i -> item i L = x] positions
 end
 
-to-report join-list [lst sep]
-  report reduce [ [a b] -> (word a sep b) ] lst
+to-report pairs [lst1 lst2]
+  report zip rep-list-each lst1 length lst2 rep-list-inline lst2 length lst1
+end
+
+to-report range-from-to-by [start finish stepsize]
+  let n ceiling ((finish - start) / stepsize)
+  if (stepsize * (finish - start)) < 0 [
+    print "***WARNING: step size in sequence reporter is wrong sign. Returning empty list***"
+    report []
+  ]
+  ifelse finish > start
+  [ report n-values n [i -> start + stepsize * i] ]
+  [ report n-values n [i -> start + stepsize * i] ]
+end
+
+to-report range-from-to [start finish]
+  ifelse finish > start
+  [ report range-from-to-by start finish 1 ]
+  [ report range-from-to-by start finish -1 ]
+end
+
+to-report range-by [finish by]
+  report range-from-to-by 0 finish by
+end
+
+to-report ranks [lst]
+  let s sort lst
+  report map [x -> position x s] lst
 end
 
 to-report rep-list [lst n inline?]
@@ -63,25 +81,26 @@ to-report rep-list-inline [lst n]
   report reduce [[a b] -> sentence a b ] map [i -> lst] range n
 end
   
-to-report range-from-to-by [start finish step]
-  let n ceiling ((finish - start) / step)
-  if (step * (finish - start)) < 0 [
-    print "***WARNING: step in sequence reporter is wrong sign. Returning empty list***"
-    report []
-  ]
-  ifelse finish > start
-  [ report n-values n [i -> start + step * i] ]
-  [ report n-values n [i -> start + step * i] ]
+to-report slice [lst slice-indexes]
+  report map [i -> item i lst] slice-indexes
 end
 
-to-report range-from-to [start finish]
-  ifelse finish > start
-  [ report range-from-to-by start finish 1 ]
-  [ report range-from-to-by start finish -1 ]
+to-report split-list-at-value [L x] ;; assume list is ordered
+  report (list filter [v -> v < x] L filter [v -> v >= x] L)
 end
 
-to-report range-by [finish by]
-  report range-from-to-by 0 finish by
+to-report transpose [lists]
+  let indexes n-values length first lists [i -> i]
+  report map [i -> map [lst -> item i lst] lists] indexes
+end
+
+to-report unzip [lists]
+  report transpose lists
+end
+
+to-report zip [list1 list2]
+  report transpose (list list1 list2)
+;  report (map [[a b] -> (list a b)] list1 list2)
 end
 
 ;; The MIT License (MIT)
