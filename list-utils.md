@@ -45,7 +45,7 @@ Reports a new list with the values from _list1_ and _list2_ merged in order. It 
 Reports a string formed by joining NetLogo string equivalents of the items in _list_ and inserting the string _seperator_ between items. For example
 
     join-list [0 2 6 6 7 9] ","
-    > 0,2,6,6,7,9
+    > "0,2,6,6,7,9"
 
 ### last-position
 **last-position** _x_ _list_
