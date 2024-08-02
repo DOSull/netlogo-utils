@@ -1,5 +1,5 @@
 # list-utils.nls documentation
-This document is intended to provide a guide to usage of the functions provided in the file `list-utils.nls`.
+This document is intended to provide a guide to using the functions provided in the file `list-utils.nls`.
 
 ## Purpose
 `list-utils.nls` provides convenient implementations of many functions for lists in NetLogo.
