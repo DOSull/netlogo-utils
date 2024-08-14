@@ -87,10 +87,10 @@ to-report conditional-probabilities-with-forcing [frequencies]
   let c-p (map [ [f s] -> ifelse-value (s > 0) [f / s] [0] ]
                 frequencies
                 cumulative-remainder frequencies)
-  report replace-item (__last-positive c-p) c-p 1
+  report replace-item (last-positive c-p) c-p 1
 end
 
-to-report __last-positive [L]
+to-report last-positive [L]
   let positives map [x -> x > 0] L
   report length positives - position true reverse positives - 1
 end

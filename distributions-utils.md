@@ -10,7 +10,7 @@ Because the random number reporters in `distribution-utils.nls` are implemented 
 ### **Warning!**
 I am not a statistician, mathematician, probability theorist, or numerical programmer. As such, the code for these utility reporters has been assembled from various sources (mainly wikipedia, but also others as specified below) and I cannot vouch for its strict numerical accuracy. The results _seem_ OK to me based on simple evaluations of histograms of results and similar 'tests'. If you need bullet-proof statistical distributions in your models, you may want to do more thorough checking of your own before using these utilities, or as suggested above incorporate _R_ code using the `r` extension. 
 
-This warning is in addition to the usual disclaimers about random code you find on the internet (even if I am a professor).
+This warning is in addition to the usual disclaimers about random code you find on the internet (even if I am &mdash; or perhaps *especially because* I am &mdash; a professor).
 
 Anyway, all that said...
 
@@ -32,7 +32,7 @@ Returns a random binomial deviate _B(n, p)_. For small numbers of random binomia
 
     length filter [x -> x < p] n-values [x -> random-float 1]
 
-but this approach slows down quickly since it is _O(n)_ and it is common to have _p_ << _n_, to be working with large _n_ and to be calling the reporter a lot. For _p_ relatively large, you can get away with `random-poisson (n * p)` as a quick hack, but if you're thinking about doing actual science with your model, this is probably best avoided.  
+but this approach slows down quickly since it is _O(n)_ and it is common to have _p_ << _n_, to be working with large _n_ and to be calling the reporter a lot. For _p_ relatively large, you can get away with `random-poisson (n * p)` as a quick hack, but if you're thinking about doing actual science] with your mode, this is best avoided.  
 
 The reporter in `distribution-utils.nls` implements the algorithm in
 
@@ -42,7 +42,7 @@ Applications_ **6**, 305-315. DOI:[10.1016/0898-1221(80)90039-5](https://dx.doi.
 
 and is _O(np)_ which will often be much quicker than the naive approach, and unlike the Poisson approach, is correct even for small values of _p_.
 
-If _p_ is less than 0, it will report 0, which is incorrect. If _p_ is greater than 1 then it will crash. Just make sure 0 &le; _p_ &le; 1!
+If *p < 0* it will report *0*, which is incorrect. If *p > 1* then it will report _n_ , which is also incorrect. In either case it will issue a warning user message, which should prompt you to fix your code so that *p >= 0* and *p <= 1*!
 
 I originally found this as code from [this post](
 https://stackoverflow.com/questions/23561551/a-efficient-binomial-random-number-generator-code-in-java#23574723), but later discovered an error and had to track down and check Devroye's paper to fix it! This is a neat little algorithm and certainly much easier to implement than the 'gold standard' algorithm of  
@@ -112,7 +112,7 @@ The required serial conditional probabilities are obtained by calling
 
     conditional-probabilities frequencies
 
-The implementation uses [`dists-cumulative-remainder`](#dists-cumulative-remainder).
+The implementation uses [`cumulative-remainder`](#cumulative-remainder).
 
 There are some situations requiring multinomial distributions where the functions in the [NetLogo `rnd` extension](https://ccl.northwestern.edu/netlogo/docs/) may be preferable to this lower-level reporter.
 
@@ -138,7 +138,7 @@ These aren't really intended to be used by an end-user, but since there is no ab
 ### conditional-probabilities
 **conditional-probabilities** _frequencies_
 
-This reporter returns a serial set of conditional probabilities derived from the supplied list of simple relative frequencies. The returned list will be a series of values <i>n<sub>i</sub></i> / &Sigma;<i><sub>i</sub><sup>N</sup> n<sub>i</sub></i>. For example
+This reporter returns a serial set of conditional probabilities derived from the supplied list of simple relative frequencies. The returned list will be a series of values $n_i/\sum_i^Nn_i$. For example
 
     conditional-probabilities [1 1 1 1 1]
     > [0.2 0.25 0.333333 0.5 1]
