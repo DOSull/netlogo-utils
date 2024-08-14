@@ -141,17 +141,23 @@ Reports the list repeated _n_ times, either by  repeating the list _n_ times 'in
     rep-list [1 2 3] 3 false
     > [1 1 1 2 2 2 3 3 3]
 
-`n` set to 0 will always return an empty list `[]`, and `n` set to 1 will return a copy of the original list. Negative values of `n` will cause an error. This reporter mimics base _R_'s `rep()` function (but with the sense of its boolean argument reversed). 
+*n* set to 0 will always return an empty list `[]`, and *n* set to 1 will return a copy of the original list. Negative values of *n* will cause an error. This reporter mimics base _R_'s `rep()` function (but with the sense of its boolean argument reversed). 
 
 ### rep-list-each
 **rep-list-each** _lst_ _n_
 
-Convenience wrapper for [**rep-list**](#rep-list) _lst_ _n_ _false_.
+Convenience wrapper for [**rep-list**](#rep-list) _lst_ _n_ _false_, so
+
+    rep-list-each [1 2 3]
+    > [1 1 1 2 2 2 3 3 3]
 
 ### rep-list-inline
 **rep-list-inline** _lst_ _n_
 
-Convenience wrapper for [**rep-list**](#rep-list) _lst_ _n_ _true_.
+Convenience wrapper for [**rep-list**](#rep-list) _lst_ _n_ _true_, so
+
+    rep-list-inline [1 2 3] 3
+    > [1 2 3 1 2 3 1 2 3]
 
 ### slice
 **slice** _list_ _indexes_
