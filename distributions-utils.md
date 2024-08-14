@@ -174,3 +174,19 @@ Reports the population standard deviation of the values in _list_. (The native N
 **population-variance** _list_
 
 Reports the population variance of the values in _x_. (The native NetLogo reporter `variance` reports the sample variance.)
+
+### rescale
+**rescale** _x x0 x1 y0 y1_
+
+Rescales _x_ from its relative position in the range _x0_ to _x1_ to a value in the new range _y0_ to _y1_, that is, 
+
+$$
+x = y_0 + \frac{x-x_0}{x_1-x_0}\left(y_1-y_0\right)
+$$
+
+For example
+
+    rescale 6 0 8 100 200
+    > 175
+
+Results may be unexpected if `x1 > x0` and `y1 > y0` are not both true, and division by zero error will occur if `x1 = x0`. 

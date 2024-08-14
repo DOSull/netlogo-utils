@@ -21,10 +21,10 @@ All the listed reporters and/or procedures will then be available in your model 
 
 Reports a list of the cumulative share of the sum of _list_, i.e. $\sum_0^i x_i/\sum_0^n x_i$.
 
-    cumulative-sum [0 1 2 3 4]
+    cumulative-proportion [0 1 2 3 4]
     > [0 0.1 0.3 0.6 1]
 
-If _list_ is empty reports `[1]` - be careful in this case!
+If _list_ is empty or sums to 0, reports `[0]` - be careful in these cases! Results will not make a lot of sense if some list elements are negative.
 
 ### cumulative-sum
 **cumulative-sum** _list_
@@ -34,7 +34,7 @@ Reports a list of the cumulative sums of _list_. For example
     cumulative-sum [0 0 4 6 9]
     > [0 0 4 10 19]
 
-If _list_ is empty reports `[0]`.
+If _list_ is empty reports `[0]`. Results will not make a lot of sense if some list elements are negative.
 
 ### insert-value-in-order
 **insert-value-in-order** _list_ _x_

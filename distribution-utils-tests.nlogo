@@ -55,7 +55,7 @@ GRAPHICS-WINDOW
 419
 -1
 -1
-5.0
+4.0
 1
 10
 1
@@ -66,9 +66,9 @@ GRAPHICS-WINDOW
 1
 1
 0
-79
+99
 0
-79
+99
 0
 0
 1
@@ -334,9 +334,9 @@ NIL
 HORIZONTAL
 
 BUTTON
-447
+449
 421
-561
+563
 454
 test-weibull
 ask patches [\n  set value random-weibull scale the-shape 0 100\n]\nupdate-displays true
@@ -366,9 +366,9 @@ NIL
 HORIZONTAL
 
 BUTTON
-446
+448
 491
-564
+566
 524
 test-gamma
 ask patches [\n  set value random-gamma-with-mean-sd gamma-mean gamma-sd\n]\nupdate-displays true
@@ -449,7 +449,7 @@ log-mean
 log-mean
 0.01
 10
-0.96
+3.13
 0.01
 1
 NIL
@@ -464,7 +464,7 @@ log-sd
 log-sd
 0
 2
-0.39
+0.99
 0.01
 1
 NIL
@@ -985,7 +985,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.3.0
+NetLogo 6.4.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@

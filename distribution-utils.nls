@@ -7,6 +7,7 @@ to-report random-lognormal [mn sd]
   report exp (lmn + lsd * random-normal 0 1)
 end
 
+
 ; This binomial algorithm from
 ; Devroye. L. 1960. Generating the maximum of independent identically
 ; distributed random variables. Computers and Mathematics with
@@ -14,12 +15,11 @@ end
 ; Based on code from
 ; https://stackoverflow.com/questions/23561551/a-efficient-binomial-random-number-generator-code-in-java#23574723
 to-report random-binomial [n p]
-  ;; check this, but ...
-  ;; if p > 1 [ print "WARNING: random-binomial p > 1" ]
-  ;; p < 0 [ print "WARNING: random-binomial p < 0" ]
+  if p > 1 [ user-message (word "WARNING: random-binomial p > 1 in random-binomial " n " " p ". Reporting " n ".") ]
+  if p < 0 [ user-message (word "WARNING: random-binomial p < 0 in random-binomial " n " " p ". Reporting 0.") ]
   ;; ... forgive it!
-  if p = 1 [ report n ]
-  if p = 0 [ report 0 ]
+  if p >= 1 [ report n ]
+  if p <= 0 [ report 0 ]
   let ln-q ln (1 - p)
   let x 0
   let s 0
@@ -57,7 +57,6 @@ to-report random-negative-binomial-with-mean-vmr [m vmr]
 end
 
 
-
 to-report random-multinomial-int [n frequencies]
   report reduce [ [a p] ->
     lput (ifelse-value (p > 0) [random-binomial (n - sum a) p] [0]) a
@@ -71,8 +70,6 @@ to-report conditional-probabilities [frequencies]
                 frequencies
                 cumulative-remainder frequencies)
 end
-
-
 
 to-report random-multinomial [n frequencies simple-frequencies?]
   let conditional-probs frequencies
@@ -90,16 +87,13 @@ to-report conditional-probabilities-with-forcing [frequencies]
   let c-p (map [ [f s] -> ifelse-value (s > 0) [f / s] [0] ]
                 frequencies
                 cumulative-remainder frequencies)
-  report replace-item (last-positive c-p) c-p 1
+  report replace-item (__last-positive c-p) c-p 1
 end
 
-
-to-report last-positive [L]
+to-report __last-positive [L]
   let positives map [x -> x > 0] L
   report length positives - position true reverse positives - 1
-;  report last-position true (map [x -> x > 0] L)
 end
-
 
 ;; for a list [x_i] returns [sum_i..n x_i]
 ;; e.g. 1 2 3 4 5 6 --> 21 20 18 15 11 6
@@ -114,6 +108,7 @@ to-report random-cauchy [locn scl]
   report locn + scl * (tan (-90 + random-float 180))
 end
 
+
 ;; https://stackoverflow.com/questions/33611708/random-number-generator-with-generalized-pareto-distribution-and-weilbull-distri
 to-report random-weibull [shp scl lower-limit upper-limit]
   let result upper-limit
@@ -123,11 +118,13 @@ to-report random-weibull [shp scl lower-limit upper-limit]
   report result
 end
 
+
 to-report random-gamma-with-mean-sd [mn sd]
   let g-scale mn / sd / sd
   let g-shape mn * g-scale
   report random-gamma g-shape g-scale
 end
+
 
 to-report population-standard-deviation [x]
   report sqrt population-variance x
@@ -137,6 +134,25 @@ to-report population-variance [x]
   let m mean x
   report mean map [xi -> (xi - m) ^ 2] x
 end
+
+
+;; x is list of values and p the corresponding cumulative
+;; probabilities - which should begin at 0 and end on 1 and
+;; be strictly increasing. x should be strictly increasing
+;; also. Reporter will fail if either list has consecutive 
+;; values that are equal.
+to-report random-from-cdf [x p]
+  let prob random-float 1 
+  let i length filter [_x -> _x < prob] p
+  report rescale prob item (i - 1) p item i p item (i - 1) x item i x
+end
+
+;; linearly rescales x in the range xmin to xmax to the 
+;; range ymin to ymax. Will fail (division by 0) if xmin = xmax
+to-report rescale [x xmin xmax ymin ymax]
+  report ymin + (ymax - ymin) * (x - xmin) / (xmax - xmin)
+end
+
 
 ;; The MIT License (MIT)
 ;;
