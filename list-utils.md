@@ -24,7 +24,7 @@ Reports a list of the cumulative share of the sum of _list_, i.e. $\sum_0^i x_i/
     cumulative-proportion [0 1 2 3 4]
     > [0 0.1 0.3 0.6 1]
 
-If _list_ is empty or sums to 0, reports `[0]` - be careful in these cases! Results will not make a lot of sense if some list elements are negative.
+If _list_ is empty, reports `[]`; it it sums to 0, reports `[0]` - be careful in these cases! Results will not make a lot of sense if some list elements are negative.
 
 ### cumulative-sum
 **cumulative-sum** _list_

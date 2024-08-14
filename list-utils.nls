@@ -1,7 +1,7 @@
 ;; additional list utilities for Netlogo
 
 to-report cumulative-proportion [lst]
-  if length lst = 0 [ report [0] ]
+  if length lst = 0 [ report [] ]
   let s sum lst
   if s = 0 [ report [0] ]
   report map [x -> x / s] cumulative-sum lst
