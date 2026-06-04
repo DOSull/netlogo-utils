@@ -1,0 +1,91 @@
+patches-own [nlm-z]
+
+to nlm-random [#mask] 
+  ask #mask [
+    set nlm-z random-float 1
+  ]
+end
+
+
+to nlm-planar-gradient [#mask #var #bearing]
+  ask #mask [
+    set nlm-z pxcor * sin #bearing + pycor * cos #bearing
+  ]
+  rescale-mask #mask
+end
+
+
+to nlm-edge-gradient [#mask #bearing]
+  nlm-planar-gradient #mask "nlm-z" #bearing
+  ask #mask [
+    set nlm-z 1 - (abs (0.5 - nlm-z) * 2)
+  ]
+end
+
+
+to nlm-distance-gradient [#mask #sources]
+  ask #mask [
+    set nlm-z distance min-one-of #sources [distance myself]
+  ]
+  rescale-mask #mask
+end
+
+
+to nlm-rectangular-clusters [#mask #min #max]
+  let not-set #mask
+  while [any? not-set] [
+    let block get-random-block #mask #min #max #min #max
+    let value random-float 1
+    ask block [ set nlm-z value ]
+    set not-set not-set with [not member? self block]
+  ]
+end
+
+
+to-report get-random-block [#patches #min-w #max-w #min-h #max-h]
+  let width random-float-between #min-w #max-w
+  let height  random-float-between #min-h #max-h
+  let [c-x c-y] (list random-float 1 random-float 1)
+  let min-x c-x - width / 2
+  let max-x c-x + width / 2
+  let min-y c-y - height / 2
+  let max-y c-y + height / 2
+  let bounds map [x -> nlm-rescale x 0 1 min-pxcor max-pxcor] (list min-x max-x min-y max-y)
+  report #patches with [
+    pxcor >= floor item 0 bounds and pxcor <= ceiling item 1 bounds and
+    pycor >= floor item 2 bounds and pycor <= ceiling item 3 bounds
+  ]
+end
+
+
+to nlm-nearest-neighbour [#mask #n]
+  create-turtles #n [ setxy random-xcor random-ycor ]
+  ask #mask [ set nlm-z [who] of min-one-of turtles [distance myself] ]
+  ask turtles [ die ]
+  let clusters map [x -> #mask with [nlm-z = x]] range #n
+  foreach clusters [ c ->
+    let value random-float 1
+    ask c [ set nlm-z value ]
+  ]
+  rescale-mask #mask
+end
+
+
+
+to rescale-mask [#mask]
+  let min-z min [nlm-z] of #mask
+  let max-z max [nlm-z] of #mask
+  ask #mask [
+    set nlm-z nlm-rescale nlm-z min-z max-z 0 1
+  ]
+end
+
+to-report random-float-between [#x0 #x1]
+  report #x0 + random-float (#x1 - #x0)
+end
+
+to-report nlm-rescale [#x #x0 #x1 #y0 #y1]
+  report #y0 + (#y1 - #y0) * (#x - #x0) / (#x1 - #x0)
+end
+
+

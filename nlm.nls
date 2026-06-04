@@ -1,6 +1,0 @@
-to nlm-random [cells] 
-  ask cells [
-    set landscape random-float 1
-  ]
-end
-

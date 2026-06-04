@@ -18,18 +18,96 @@ to-report split-string [str sep]
   [ report sentence words this-word ]
 end
 
-to-report replace [s a b]
-  let i position a s
-  report replace-item i s b
+to-report replace [#s #a #b]
+  let result #s
+  if is-list? #a [
+    (foreach #a #b [ [a b] ->
+      set result replace-single result a b
+      ])
+    report result
+  ]
+  report replace-single #s #a #b
 end
 
-to-report join-list [lst sep]
-  report reduce [ [a b] -> (word a sep b) ] lst
+to-report replace-single [#s #a #b]
+  let result ""
+  let breaks str-matches #s #a
+  if length breaks = 0 [ report #s ]
+  let matched-sets map [i -> n-values length #a [j -> j + i]] breaks
+  let matched reduce [[a b] -> (sentence a b)] matched-sets
+  let unmatched filter [x -> not member? x matched] range length #s
+  foreach range length #s [ i ->
+    if member? i breaks [ set result (word result #b) ]
+    if member? i unmatched [ set result (word result item i #s) ]
+  ]
+  report result
 end
+
+
+to-report upper-case [#s]
+  report replace #s string-as-list "abcdefghijklmnopqrstuvwxyz" string-as-list "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+end
+
+to-report lower-case [#s]
+  report replace #s string-as-list "ABCDEFGHIJKLMNOPQRSTUVWXYZ" string-as-list "abcdefghijklmnopqrstuvwxyz"
+end
+
+;  See:
+;  https://en.wikipedia.org/wiki/Knuth-Morris-Pratt_algorithm which provides
+;  detailed pseudo-code on which this code is directly based. See also:
+;
+;    Knuth DE, JH Morris Jr, and VR Pratt. 1977. Fast pattern  matching in
+;    strings. SIAM Journal on Computing 6(2): 323-350. doi: 10.1137/0206024.
+;
+;  Note that the terse variable names are those used in the KMP 1977 paper.
+to-report str-matches [#s #pat]
+  let [j k] [0 0]
+  let finds []
+  let table get-table #pat
+  while [ j < length #s ] [
+    ifelse item k #pat = item j #s [
+      set j j + 1
+      set k k + 1
+      if k = length #pat [
+        set finds lput (j - k) finds
+        set k item k table
+      ]
+    ]
+    [
+      set k item k table
+      if k < 0 [
+        set j j + 1
+        set k k + 1
+      ]
+    ]
+  ]
+  report finds
+end
+
+to-report get-table [#pat]
+  let pos 1
+  let cnd 0
+  let T (sentence [-1] n-values length #pat [i -> nobody])
+  while [ pos < length #pat ] [
+    ifelse item pos #pat = item cnd #pat [
+      set T replace-item pos T item cnd T
+    ]
+    [
+      set T replace-item pos T cnd
+      while [ cnd >= 0 and item pos #pat != item cnd #pat ] [
+        set cnd item cnd T
+      ]
+    ]
+    set pos pos + 1
+    set cnd cnd + 1
+  ]
+  report replace-item pos T cnd
+end
+
 
 ;; The MIT License (MIT)
 ;;
-;; Copyright (c) 2021 David O'Sullivan
+;; Copyright (c) 2026 David O'Sullivan
 ;;
 ;; Permission is hereby granted, free of charge, to any person
 ;; obtaining a copy of this software and associated documentation

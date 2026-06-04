@@ -1,24 +1,24 @@
-to draw-borders-based-on-variable [var col]
-  draw-boundaries (get-boundary-patches var) var col
+to draw-borders-based-on-variable [#var #color]
+  draw-boundaries (get-boundary-patches #var) #var #color
 end
 
-to-report get-boundary-patches [var]
-  report runresult (word "patches with [any? neighbors4 with [" var " != [" var "] of myself]]")
+to-report get-boundary-patches [#var]
+  report runresult (word "patches with [any? neighbors4 with [" #var " != [" #var "] of myself]]")
 end
 
-to-report values-differ? [p1 p2 var]
-  report get var p1 != get var p2
+to-report values-differ? [#patch-1 #patch-2 #var]
+  report get #var #patch-1 != get #var #patch-2
 end
 
-to-report get [var p]
-  report runresult (word "[" var "] of p")
+to-report get [#var #patch]
+  report runresult (word "[" #var "] of #patch")
 end
 
-to draw-boundaries [boundary-patches var col]
-  ask boundary-patches [
+to draw-boundaries [#boundary-patches #var #color]
+  ask #boundary-patches [
     ask neighbors4 [
-      if values-differ? myself self var [
-        draw-line-between self myself col
+      if values-differ? myself self #var [
+        draw-line-between self myself #color
       ]
     ]
   ]
@@ -27,15 +27,15 @@ end
 ;; draw line between two patches
 ;; by sprouting a turtle and having it move
 ;; to halfway point and draw the edge
-to draw-line-between [p1 p2 col]
+to draw-line-between [#patch-1 #patch-2 #color]
   ;; set a visible colour
-  let pen-color col
-  ask p1 [
+  let pen-color #color
+  ask #patch-1 [
     ;; make a turtle to do the drawing
     sprout 1 [
       set color pen-color
       ;; move to the boundary
-      face p2
+      face #patch-2
       jump 0.5
       ;; face the corner and move there
       rt 90

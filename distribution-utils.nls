@@ -1,10 +1,10 @@
 ;; additional probability distributions for NetLogo
 
-to-report random-lognormal [mn sd]
-  let lvar ln (1 + (sd ^ 2) / (mn ^ 2))
-  let lmn ln mn - (lvar / 2)
-  let lsd sqrt lvar
-  report exp (lmn + lsd * random-normal 0 1)
+to-report random-lognormal [#mean #standard-deviation]
+  let l-variance ln (1 + (#standard-deviation ^ 2) / (#mean ^ 2))
+  let l-mean ln #mean - (l-variance / 2)
+  let l-sd sqrt l-variance
+  report exp (l-mean + l-sd * random-normal 0 1)
 end
 
 
@@ -14,18 +14,18 @@ end
 ; Applications 6, 305-315.
 ; Based on code from
 ; https://stackoverflow.com/questions/23561551/a-efficient-binomial-random-number-generator-code-in-java#23574723
-to-report random-binomial [n p]
-  if p > 1 [ user-message (word "WARNING: random-binomial p > 1 in random-binomial " n " " p ". Reporting " n ".") ]
-  if p < 0 [ user-message (word "WARNING: random-binomial p < 0 in random-binomial " n " " p ". Reporting 0.") ]
+to-report random-binomial [#n #p]
+  if #p > 1 [ user-message (word "WARNING: random-binomial p > 1 in random-binomial " #n " " #p ". Reporting " #n ".") ]
+  if #p < 0 [ user-message (word "WARNING: random-binomial p < 0 in random-binomial " #n " " #p ". Reporting 0.") ]
   ;; ... forgive it!
-  if p >= 1 [ report n ]
-  if p <= 0 [ report 0 ]
-  let ln-q ln (1 - p)
+  if #p >= 1 [ report #n ]
+  if #p <= 0 [ report 0 ]
+  let ln-q ln (1 - #p)
   let x 0
   let s 0
   ; also need to avoid x = n
-  while [x < n] [
-    set s s + ln (random-float 1) / (n - x)
+  while [x < #n] [
+    set s s + ln (random-float 1) / (#n - x)
     if s < ln-q [
       report x
     ]
@@ -38,60 +38,60 @@ end
 ;; negative binomial implemented as a Poisson draw parameterised
 ;; with a Gamma distributed variate per
 ;; https://en.wikipedia.org/wiki/Negative_binomial_distribution#Gamma%E2%80%93Poisson_mixture
-to-report random-negative-binomial [r p]
-  report random-poisson random-gamma r (p / (1 - p))
+to-report random-negative-binomial [#r #p]
+  report random-poisson random-gamma #r (#p / (1 - #p))
 end
 
 ;; wrapper to get a negative binomial variate with mean m and variance mean ratio vmr
 ;; the standard nbin parameters are r and p
-to-report random-negative-binomial-with-mean-vmr [m vmr]
-  ;; if vmr = 1 then report poisson random variate
-  if vmr < 1 [ 
-    show "ERROR: vmr must be > 1" 
+to-report random-negative-binomial-with-mean-vmr [#mean #variance-mean-ratio]
+  ;; if #variance-mean-ratio = 1 then report poisson random variate
+  if #variance-mean-ratio < 1 [ 
+    show "ERROR: variance mean ratio must be > 1" 
     report -999
   ]
-  if vmr = 1 [ report random-poisson m ]
-  let r m / (vmr - 1)
-  let p 1 / vmr
+  if #variance-mean-ratio = 1 [ report random-poisson #mean ]
+  let r #mean / (#variance-mean-ratio - 1)
+  let p 1 / #variance-mean-ratio
   report random-negative-binomial r p
 end
 
 
-to-report random-multinomial-int [n frequencies]
+to-report random-multinomial-int [#n #frequencies]
   report reduce [ [a p] ->
-    lput (ifelse-value (p > 0) [random-binomial (n - sum a) p] [0]) a
-  ] fput [] conditional-probabilities frequencies
+    lput (ifelse-value (p > 0) [random-binomial (#n - sum a) p] [0]) a
+  ] fput [] conditional-probabilities #frequencies
 end
 
 ;; for a provided list of relative frequencies [f_i]
 ;; returns the conditional probabilities [f_i / sum_i..n f_i]
-to-report conditional-probabilities [frequencies]
+to-report conditional-probabilities [#frequencies]
   report (map [ [f s] -> ifelse-value (s > 0) [f / s] [0] ]
-                frequencies
-                cumulative-remainder frequencies)
+                #frequencies
+                cumulative-remainder #frequencies)
 end
 
-to-report random-multinomial [n frequencies simple-frequencies?]
-  let conditional-probs frequencies
-  if simple-frequencies? [
-    set conditional-probs conditional-probabilities-with-forcing frequencies
+to-report random-multinomial [#n #frequencies #simple-frequencies?]
+  let conditional-probs #frequencies
+  if #simple-frequencies? [
+    set conditional-probs conditional-probabilities-with-forcing #frequencies
   ]
   report reduce [ [a p] ->
-    lput (ifelse-value (p > 0) [random-binomial (n - sum a) p] [0]) a
+    lput (ifelse-value (p > 0) [random-binomial (#n - sum a) p] [0]) a
   ] fput [] conditional-probs
 end
 
 ;; for a provided list of relative frequencies [f_i]
 ;; returns the conditional probabilities [f_i / sum_i..n f_i]
-to-report conditional-probabilities-with-forcing [frequencies]
+to-report conditional-probabilities-with-forcing [#frequencies]
   let c-p (map [ [f s] -> ifelse-value (s > 0) [f / s] [0] ]
-                frequencies
-                cumulative-remainder frequencies)
+                #frequencies
+                cumulative-remainder #frequencies)
   report replace-item (last-positive c-p) c-p 1
 end
 
-to-report last-positive [L]
-  let positives map [x -> x > 0] L
+to-report last-positive [#list]
+  let positives map [x -> x > 0] #list  
   report length positives - position true reverse positives - 1
 end
 
@@ -99,40 +99,40 @@ end
 ;; e.g. 1 2 3 4 5 6 --> 21 20 18 15 11 6
 ;; same result as reverse cumulative-sum reverse L
 ;; using the cumulative-sum reporter from list-utils.nls
-to-report cumulative-remainder [L]
-  report but-last reduce [ [a b] -> lput (last a - b) a ] fput (list sum L) L
+to-report cumulative-remainder [#list]
+  report but-last reduce [ [a b] -> lput (last a - b) a ] fput (list sum #list) #list
 end
 
 
-to-report random-cauchy [locn scl]
-  report locn + scl * (tan (-90 + random-float 180))
+to-report random-cauchy [#location #scale]
+  report #location + #scale * (tan (-90 + random-float 180))
 end
 
 
 ;; https://stackoverflow.com/questions/33611708/random-number-generator-with-generalized-pareto-distribution-and-weilbull-distri
-to-report random-weibull [shp scl lower-limit upper-limit]
-  let result upper-limit
-  while [result >= upper-limit or result < lower-limit] [
-    set result scl * (-1 * ln (random-float 1)) ^ (1 / shp)
+to-report random-weibull [#shape #scale #limit-0 #limit-1]
+  let result #limit-1
+  while [result >= #limit-1 or result < #limit-0] [
+    set result #scale * (-1 * ln (random-float 1)) ^ (1 / #shape)
   ]
   report result
 end
 
 
-to-report random-gamma-with-mean-sd [mn sd]
-  let g-scale mn / sd / sd
-  let g-shape mn * g-scale
+to-report random-gamma-with-mean-sd [#mean #standard-deviation]
+  let g-scale #mean / #standard-deviation / #standard-deviation
+  let g-shape #mean * g-scale
   report random-gamma g-shape g-scale
 end
 
 
-to-report population-standard-deviation [x]
-  report sqrt population-variance x
+to-report population-standard-deviation [#x]
+  report sqrt population-variance #x
 end
 
-to-report population-variance [x]
-  let m mean x
-  report mean map [xi -> (xi - m) ^ 2] x
+to-report population-variance [#x]
+  let _mean mean #x
+  report mean map [xi -> (xi - _mean) ^ 2] #x
 end
 
 

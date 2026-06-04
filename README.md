@@ -1,6 +1,13 @@
 # netlogo-utils
-Netlogo code for string, list and probability distributions (at least to begin with) written in 'native' Netlogo (no extensions required!)
+Netlogo utility 'packages', i.e., functions written in 'native' Netlogo, to 'extend' the language, with no need for extensions. To use any of these simply put `__includes[ "xxx-utils.nls" ]` at the top of your Netlogo code, and ensure the file is in the same folder as your model.
 
-+ [`distribution-utils.nls`](distributions-utils.md)
-+ [`list-utils.nls`](list-utils.md)
-+ `string-utils.nls` (to follow)
+Code for lists and probability distributions is reasonably mature and documented as linked below:
+
++ [`list-utils.nls`](list-utils.md) for a variety of list reporters
++ [`distribution-utils.nls`](distributions-utils.md) for some random number generators that native Netlogo does not support
+
+Additional utility packs remain 'under-development' although they should work OK, but are not yet documented.
+
++ `drawing-utils.nls` for drawing boundaries between patches with different values
++ `string-utils.nls` for manipulating strings (still thinking about what functionality to include in this)
++ `nlm-utils.nls` for neutral landscapes
