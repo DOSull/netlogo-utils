@@ -5,6 +5,7 @@
 globals [
   the-list
   next-value
+  cmd
 ]
 
 to setup
@@ -20,73 +21,93 @@ to go
   set the-list insert-value-in-order the-list next-value
   let shuffled shuffle the-list
 
-  output-print join-list (list "insert-value-in-order" old-list next-value "\n>"
-                                the-list "\n") " "
+  set cmd make-command-string "insert-value-in-order" (list old-list next-value)
+  render cmd
 
-  output-print join-list (list "cumulative-sum" the-list "\n>"
-                                cumulative-sum the-list "\n") " "
+  set cmd make-command-string "cumulative-sum" (list the-list)
+  render cmd
 
-  output-print join-list (list "cumulative-proportion" the-list "\n>"
-                                map [x -> precision x 3] cumulative-proportion the-list "\n") " "
+  set cmd make-command-string "cumulative-proportion" (list the-list)
+  render cmd
 
-  output-print join-list (list "insert-values-in-order" the-list (cumulative-sum the-list) "\n>"
-                                insert-values-in-order the-list cumulative-sum the-list "\n") " "
+  set cmd make-command-string "insert-values-in-order" (list the-list (cumulative-sum the-list))
+  render cmd
+
   if length the-list > 1 [
     let split min the-list + random (max the-list - min the-list)
-    output-print join-list (list "split-list-at-value" the-list split "\n>"
-                                  split-list-at-value the-list split "\n") " "
+    set cmd make-command-string "split-list-at-value" (list the-list split)
+    render cmd
   ]
-
-  output-print join-list (list "zip" the-list cumulative-sum the-list "\n>"
-                                zip the-list cumulative-sum the-list "\n") " "
+  
+  set cmd make-command-string "zip" (list the-list (cumulative-sum the-list))
+  render cmd
 
   if length the-list > 0 [
-    output-print join-list (list "unzip" zip the-list cumulative-sum the-list "\n>"
-                                  unzip zip the-list cumulative-sum the-list "\n") " "
-  ]
-
-  if length the-list > 0 [
+    set cmd make-command-string "unzip" (list (list the-list (cumulative-sum the-list)))
+    render cmd
+    
     let number one-of modes the-list
-    output-print join-list (list "last-position" number shuffled "\n>"
-                                  last-position number shuffled "\n") " "
+    set cmd make-command-string "last-position" (list number shuffled)
+    render cmd
+    
+    set cmd make-command-string "matches" (list number shuffled)
+    render cmd
+    
+    set cmd make-command-string "matching-positions" (list number shuffled)
+    render cmd
+    
+    set cmd make-command-string "join-list" (list the-list ",")
+    render cmd
+    
+    set cmd make-command-string "rep-list-inline" (list the-list 2)
+    render cmd
+    
+    set cmd make-command-string "rep-list-each" (list the-list 2)
+    render cmd
   ]
-
-  if length the-list > 0 [
-    let number one-of modes the-list
-    output-print join-list (list "matches" number shuffled "\n>"
-                                  matches number shuffled "\n") " "
-  ]
-
-  if length the-list > 0 [
-    let number one-of modes the-list
-    output-print join-list (list "matching-positions" number shuffled "\n>"
-                                  matching-positions number shuffled "\n") " "
-  ]
-
-  if length the-list > 0 [
-    output-print join-list (list "join-list" the-list "\",\"" "\n>"
-                                  join-list the-list "," "\n") " "
-  ]
-
-  if length the-list > 0 [
-    output-print join-list (list "rep-list-inline" the-list 2 "\n>"
-                                  rep-list-inline the-list 2 "\n") " "
-  ]
-
-  if length the-list > 0 [
-    output-print join-list (list "rep-list-each" the-list 2 "\n>"
-                                  rep-list-each the-list 2 "\n") " "
-  ]
-
   set next-value random 10
   tick
 end
 
 
+;; enquotes the supplied variable if it is a string
+to-report quote [#s]
+  if is-string? #s
+  [ report (word "\"" #s "\"") ]
+  report #s
+end
+
+;; makes a string representing the supplied command and arguments
+to-report make-command-string [#cmd #args]
+  if length #args = 0 [
+    report #cmd
+  ]
+  if length #args = 1 [
+    report (word #cmd " " quote first #args)
+  ]
+  report (word #cmd " " reduce [[a b] -> (word a " " b)] map [a -> quote a] #args)
+end
+
+;; renders a command and its results
+to render [#cmd]
+  render-command #cmd
+  render-results #cmd
+end
+
+to render-command [#cmd]
+  output-print #cmd
+end
+
+to render-results [#cmd]
+  output-type ">"
+  output-write runresult #cmd
+  output-print "\n"
+end
+
 
 ; The MIT License (MIT)
 ;;
-;; Copyright (c) 2021 David O'Sullivan
+;; Copyright (c) 2021-26 David O'Sullivan
 ;;
 ;; Permission is hereby granted, free of charge, to any person
 ;; obtaining a copy of this software and associated documentation
@@ -231,7 +252,18 @@ Pairs corresponing items from _list1_ and _list2_ into a list of lists of length
     zip [0 2 3 7 8] [0 2 5 12 20]
     > [[0 0] [2 2] [3 5] [7 12] [8 20]]
 
-_list1_ and _list2_ must be the same length. The same effect can be obtained using [`transpose`](#transpose) by calling `transpose (list list1 list2)`, so `zip` is effectively a convenience wrapper for `transpose` when only two lists are involved.]]></info>
+_list1_ and _list2_ must be the same length. The same effect can be obtained using [`transpose`](#transpose) by calling `transpose (list list1 list2)`, so `zip` is effectively a convenience wrapper for `transpose` when only two lists are involved.
+
+
+## The MIT License (MIT)
+Copyright &copy; 2021-26 David O'Sullivan
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+]]></info>
   <turtleShapes>
     <shape name="default" rotatable="true" editableColorIndex="0">
       <polygon color="-1920102913" filled="true" marked="true">
