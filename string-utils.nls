@@ -13,43 +13,64 @@ to-report split-string [str sep]
       set this-word "" ]
     [ set this-word word this-word c ]
   ]
-  ifelse this-word = ""
-  [ report words ]
-  [ report sentence words this-word ]
+  set words sentence words this-word
+  report filter [s -> s != sep and s != ""] words
 end
 
-to-report replace [#s #a #b]
+to-report strip [#s]
+  report left-strip right-strip #s
+end
+
+to-report left-strip [#s]
   let result #s
-  if is-list? #a [
-    (foreach #a #b [ [a b] ->
-      set result replace-single result a b
-      ])
+  while [first result = " "] [ set result but-first result ]
+  report result
+end
+
+to-report right-strip [#s]
+  let result #s
+  while [last result = " "] [ set result but-last result ]
+  report result
+end
+
+to-report replace [#s #pattern #replace]
+  let result #s
+  if is-list? #pattern [
+    (foreach #pattern #replace [ [pat rep] ->
+      set result replace-one-pattern result pat rep
+    ])
     report result
   ]
-  report replace-single #s #a #b
+  report replace-one-pattern #s #pattern #replace
 end
 
-to-report replace-single [#s #a #b]
+to-report replace-one-pattern [#s #pattern #replace]
   let result ""
-  let breaks str-matches #s #a
+  let breaks str-matches #s #pattern
   if length breaks = 0 [ report #s ]
-  let matched-sets map [i -> n-values length #a [j -> j + i]] breaks
-  let matched reduce [[a b] -> (sentence a b)] matched-sets
+  let matched-sets map [i -> n-values length #pattern [j -> j + i]] breaks
+  let matched reduce [[pat rep] -> (sentence pat rep)] matched-sets
   let unmatched filter [x -> not member? x matched] range length #s
   foreach range length #s [ i ->
-    if member? i breaks [ set result (word result #b) ]
+    if member? i breaks [ set result (word result #replace) ]
     if member? i unmatched [ set result (word result item i #s) ]
   ]
   report result
 end
 
-
 to-report upper-case [#s]
-  report replace #s string-as-list "abcdefghijklmnopqrstuvwxyz" string-as-list "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  report case #s "U"
 end
 
 to-report lower-case [#s]
-  report replace #s string-as-list "ABCDEFGHIJKLMNOPQRSTUVWXYZ" string-as-list "abcdefghijklmnopqrstuvwxyz"
+  report case #s "L"
+end
+
+to-report case [#s #upper-or-lower]
+  let lower-abc string-as-list "abcdefghijklmnopqrstuvwxyz"
+  let upper-abc string-as-list "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  if #upper-or-lower = "U" [ report replace #s lower-abc upper-abc ]
+  report replace #s upper-abc lower-abc
 end
 
 ;  See:

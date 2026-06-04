@@ -2,26 +2,71 @@
 <model version="NetLogo 7.0.0" snapToGrid="false">
   <code><![CDATA[__includes [ "string-utils.nls" "list-utils.nls" ]
 
+globals [cmd ]
+
 to setup
   clear-all
-  let q-string quote the-string
  
-  output-print (word "string-as-list " q-string "\n"
-                     "> " map [s -> quote s] string-as-list the-string "\n")
+  set cmd make-command-string "string-as-list" (list the-string)
+  render cmd
+
+  set cmd make-command-string "split-string" (list the-string " ")
+  render cmd
+
+  set cmd make-command-string "left-strip" (list the-string)
+  render cmd
+
+  set cmd make-command-string "right-strip" (list the-string)
+  render cmd
+
+  set cmd make-command-string "strip" (list the-string)
+  render cmd
   
-  output-print (word "replace " q-string " " quote "i" " " quote "u" "\n"
-                     "> " quote replace the-string "i" "u" "\n")
+  set cmd make-command-string "replace" (list the-string "i" "u")
+  render cmd
 
-  output-print (word "upper-case " q-string "\n"
-                     "> " quote upper-case the-string "\n")
+  set cmd make-command-string "replace" (list the-string "an" "the")
+  render cmd
 
-  output-print (word "lower-case " q-string "\n"
-                     "> " quote lower-case the-string "\n")
+  set cmd make-command-string "upper-case" (list the-string)
+  render cmd
+  
+  set cmd make-command-string "lower-case" (list the-string)
+  render cmd
 end
 
-
+;; enquotes the supplied variable if it is a string
 to-report quote [#s]
-  report (word "\"" #s "\"")
+  if is-string? #s
+  [ report (word "\"" #s "\"") ]
+  report #s
+end
+
+;; makes a string representing the supplied command and arguments
+to-report make-command-string [#cmd #args]
+  if length #args = 0 [
+    report #cmd
+  ]
+  if length #args = 1 [
+    report (word #cmd " " quote first #args)
+  ]
+  report (word #cmd " " reduce [[a b] -> (word a " " b)] map [a -> quote a] #args)
+end
+
+;; renders a command and its results
+to render [#cmd]
+  render-command #cmd
+  render-results #cmd
+end
+
+to render-command [#cmd]
+  output-print #cmd
+end
+
+to render-results [#cmd]
+  output-type ">"
+  output-write runresult #cmd
+  output-print "\n"
 end
 
 ; The MIT License (MIT)
@@ -49,8 +94,8 @@ end
   <widgets>
     <view x="533" wrappingAllowedX="true" y="17" frameRate="30.0" minPycor="-1" height="16" showTickCounter="true" patchSize="4.0" fontSize="10" wrappingAllowedY="true" width="16" tickCounterLabel="ticks" maxPycor="1" updateMode="0" maxPxcor="1" minPxcor="-1"></view>
     <button x="19" y="26" height="33" disableUntilTicks="false" forever="false" kind="Observer" width="73" sizeVersion="0">setup</button>
-    <output x="11" y="108" height="703" fontSize="12" width="544"></output>
-    <input x="113" multiline="true" y="8" height="89" variable="the-string" type="string" width="250">This is an example string.</input>
+    <input x="113" multiline="true" y="8" height="89" variable="the-string" type="string" width="250"> This is an AMPLE string. </input>
+    <output x="11" y="108" height="662" fontSize="12" width="544"></output>
   </widgets>
   <info><![CDATA[# list-utils.nls documentation
 This document is intended to provide a guide to usage of the functions provided in the file `list-utils.nls`.
