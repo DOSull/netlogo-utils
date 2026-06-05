@@ -32,8 +32,8 @@ to-report matches [#x #list]
 end
 
 to-report matching-positions [#x #list]
-  let positions n-values length #list [i -> i]
-  report filter [i -> item i #list = #x] positions
+  let posns range length #list
+  report filter [i -> item i #list = #x] posns
 end
 
 to-report pairs [#list1 #list2]
@@ -51,13 +51,13 @@ to-report range-from-to-by [#start #finish #step]
   [ report n-values n [i -> #start + #step * i] ]
 end
 
-to-report #range-from-to [#start #finish]
+to-report range-from-to [#start #finish]
   ifelse #finish > #start
   [ report range-from-to-by #start #finish 1 ]
   [ report range-from-to-by #start #finish -1 ]
 end
 
-to-report #range-by [#finish #by]
+to-report range-by [#finish #by]
   report range-from-to-by 0 #finish #by
 end
 

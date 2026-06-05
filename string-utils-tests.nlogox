@@ -7,12 +7,57 @@ globals [cmd ]
 to setup
   clear-all
  
-  set cmd make-command-string "string-as-list" (list the-string)
+  set cmd make-command-string "string-as-list" (list "Hello world")
   render cmd
 
-  set cmd make-command-string "split-string" (list the-string " ")
+  set cmd make-command-string "partition" (list the-string "EXAMPLE")
   render cmd
 
+  set cmd make-command-string "split" (list "Hello world" " ")
+  render cmd
+  
+  set cmd make-command-string "positions" (list the-string "is")
+  render cmd
+  
+  set cmd make-command-string "positions" (list "abababab" "aba")
+  render cmd
+  
+  set cmd make-command-string "all-positions" (list "abababab" "aba")
+  render cmd
+  
+  set cmd make-command-string "string-count" (list the-string "is")
+  render cmd
+  
+  set cmd make-command-string "starts-with" (list the-string "This")
+  render cmd
+  
+  set cmd make-command-string "remove-prefix" (list the-string (substring the-string 0 5))
+  render cmd
+  
+  set cmd make-command-string "starts-with" (list the-string "This")
+  render cmd
+  
+  set cmd make-command-string "remove-suffix" (list the-string (substring the-string (length the-string - 5) length the-string))
+  render cmd
+  
+  set cmd make-command-string "ends-with" (list the-string ". ")
+  render cmd
+  
+  set cmd make-command-string "replace" (list the-string "EX" "")
+  render cmd
+
+  set cmd make-command-string "replace" (list the-string "an" "the")
+  render cmd
+
+  set cmd make-command-string "replace" (list the-string (string-as-list "aeiou") (string-as-list "AEIOU"))
+  render cmd
+
+  set cmd make-command-string "upper-case" (list the-string)
+  render cmd
+  
+  set cmd make-command-string "lower-case" (list the-string)
+  render cmd
+  
   set cmd make-command-string "left-strip" (list the-string)
   render cmd
 
@@ -22,23 +67,20 @@ to setup
   set cmd make-command-string "strip" (list the-string)
   render cmd
   
-  set cmd make-command-string "replace" (list the-string "i" "u")
-  render cmd
-
-  set cmd make-command-string "replace" (list the-string "an" "the")
-  render cmd
-
-  set cmd make-command-string "upper-case" (list the-string)
+  set cmd make-command-string "left-justify" (list the-string 50)
   render cmd
   
-  set cmd make-command-string "lower-case" (list the-string)
+  set cmd make-command-string "right-justify" (list the-string 50)
+  render cmd
+  
+  set cmd make-command-string "centre" (list the-string 50)
   render cmd
 end
 
 ;; enquotes the supplied variable if it is a string
 to-report quote [#s]
-  if is-string? #s
-  [ report (word "\"" #s "\"") ]
+  if is-string? #s [ report (word "\"" #s "\"") ]
+  if is-list? #s [ report map [s -> quote s] #s ]
   report #s
 end
 
@@ -94,8 +136,8 @@ end
   <widgets>
     <view x="533" wrappingAllowedX="true" y="17" frameRate="30.0" minPycor="-1" height="16" showTickCounter="true" patchSize="4.0" fontSize="10" wrappingAllowedY="true" width="16" tickCounterLabel="ticks" maxPycor="1" updateMode="0" maxPxcor="1" minPxcor="-1"></view>
     <button x="19" y="26" height="33" disableUntilTicks="false" forever="false" kind="Observer" width="73" sizeVersion="0">setup</button>
-    <input x="113" multiline="true" y="8" height="89" variable="the-string" type="string" width="250"> This is an AMPLE string. </input>
-    <output x="11" y="108" height="662" fontSize="12" width="544"></output>
+    <input x="113" multiline="true" y="8" height="89" variable="the-string" type="string" width="250"> This is an EXAMPLE string. </input>
+    <output x="11" y="108" height="797" fontSize="10" width="602"></output>
   </widgets>
   <info><![CDATA[## The MIT License (MIT)
 Copyright &copy; 2021-26 David O'Sullivan

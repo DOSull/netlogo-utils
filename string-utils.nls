@@ -1,36 +1,56 @@
 ;; additional string utilities for Netlogo
 
-to-report string-as-list [str]
-  report n-values length str [i -> item i str]
+to-report string-as-list [#s]
+  report map [i -> item i #s] range length #s
 end
 
-to-report split-string [str sep]
-  let words []
-  let this-word ""
-  foreach (string-as-list str) [ c ->
-    ifelse c = sep
-    [ set words sentence words this-word
-      set this-word "" ]
-    [ set this-word word this-word c ]
+to-report partition [#s #pattern]
+  let i position #pattern #s
+  if is-number? i [
+    report (list (substring #s 0 i) #pattern (substring #s (i + length #pattern) (length #s)))
   ]
-  set words sentence words this-word
-  report filter [s -> s != sep and s != ""] words
+  report (list #s "" "")
 end
 
-to-report strip [#s]
-  report left-strip right-strip #s
+to-report split [#s #sep]
+  let str #s
+  let parts partition str #sep
+  let all-parts []
+  while [last parts != ""] [
+    set all-parts lput first parts all-parts
+    set str last parts
+    set parts partition str #sep
+  ]
+  set all-parts lput first parts all-parts
+  report filter [s -> s != #sep and s != ""] all-parts
 end
 
-to-report left-strip [#s]
-  let result #s
-  while [first result = " "] [ set result but-first result ]
-  report result
+to-report string-count [#s #pattern]
+  report length positions #s #pattern
 end
 
-to-report right-strip [#s]
-  let result #s
-  while [last result = " "] [ set result but-last result ]
-  report result
+to-report starts-with [#s #prefix]
+  if length #s >= length #prefix [ 
+    report substring #s 0 length #prefix = #prefix
+  ]
+  report false
+end
+
+to-report remove-prefix [#s #prefix]
+  if starts-with #s #prefix [ report remove #prefix #s ]
+  report #s
+end
+
+to-report ends-with [#s #suffix]
+  if length #s >= length #suffix [ 
+    report substring #s (length #s - length #suffix) length #s = #suffix
+  ]
+  report false
+end
+
+to-report remove-suffix [#s #suffix]
+  if ends-with #s #suffix [ report substring #s 0 (length #s - length #suffix) ]
+  report #s
 end
 
 to-report replace [#s #pattern #replace]
@@ -46,16 +66,72 @@ end
 
 to-report replace-one-pattern [#s #pattern #replace]
   let result ""
-  let breaks str-matches #s #pattern
-  if length breaks = 0 [ report #s ]
-  let matched-sets map [i -> n-values length #pattern [j -> j + i]] breaks
+  let posns positions #s #pattern
+  if length posns = 0 [ report #s ]
+  let matched-sets map [i -> n-values length #pattern [j -> j + i]] posns
   let matched reduce [[pat rep] -> (sentence pat rep)] matched-sets
   let unmatched filter [x -> not member? x matched] range length #s
   foreach range length #s [ i ->
-    if member? i breaks [ set result (word result #replace) ]
+    if member? i posns [ set result (word result #replace) ]
     if member? i unmatched [ set result (word result item i #s) ]
   ]
   report result
+end
+
+to-report left-strip [#s]
+  let result #s
+  while [first result = " "] [ set result but-first result ]
+  report result
+end
+
+to-report right-strip [#s]
+  let result #s
+  while [last result = " "] [ set result but-last result ]
+  report result
+end
+
+to-report strip [#s]
+  report left-strip right-strip #s
+end
+
+to-report right-justify [#s #n]
+  let len length #s
+  if #n > len [
+    let npad #n - len
+    report reduce [[a b] -> (word a b)] (sentence (n-values npad [i -> " "]) (string-as-list #s))
+    if npad = 1 [
+      report (word " " #s)
+    ]
+    report (word reduce [[a b] -> (word a b)] n-values npad [i -> " "])
+  ]
+  report #s
+end
+
+to-report left-justify [#s #n]
+  let len length #s
+  if #n > len [
+    let npad #n - len
+    report reduce [[a b] -> (word a b)] (sentence (string-as-list #s) (n-values npad [i -> " "]))
+    if npad = 1 [
+      report (word " " #s)
+    ]
+    report (word reduce [[a b] -> (word a b)] n-values npad [i -> " "])
+  ]
+  report #s
+end
+
+to-report centre [#s #n]
+  let len length #s
+  if #n > len [
+    let npad #n - len
+    let left-n floor (npad / 2)
+    report left-justify right-justify #s (len + left-n) #n
+  ]
+  report #s
+end
+
+to-report punctuation
+  report "%&'()*+,-./:;<=>?@[\\]^_`{|}~\""
 end
 
 to-report upper-case [#s]
@@ -67,10 +143,37 @@ to-report lower-case [#s]
 end
 
 to-report case [#s #upper-or-lower]
-  let lower-abc string-as-list "abcdefghijklmnopqrstuvwxyz"
-  let upper-abc string-as-list "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-  if #upper-or-lower = "U" [ report replace #s lower-abc upper-abc ]
-  report replace #s upper-abc lower-abc
+  if #upper-or-lower = "U" [ report replace #s lower-case-letters upper-case-letters ]
+  report replace #s upper-case-letters lower-case-letters
+end
+
+to-report lower-case-alphabet
+  report "abcdefghijklmnopqrstuvwxyz"
+end
+
+to-report upper-case-alphabet
+  report "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+end
+
+to-report lower-case-letters 
+  report string-as-list lower-case-alphabet
+end
+
+to-report upper-case-letters
+  report string-as-list upper-case-alphabet
+end
+
+to-report all-positions [#s #pattern]
+  let strings map [i -> substring #s i length #s] range (length #s - length #pattern + 1)
+  let finds map [s -> starts-with s #pattern] strings
+  report filter [i -> item i finds] range length finds
+end
+
+to-report positions [#s #pattern]
+  let finds all-positions #s #pattern
+  if length finds < 2 [ report finds ]
+  let n length #pattern
+  report reduce [[a b] -> ifelse-value (b - last a) >= n [lput b a] [a]] fput (list (first finds)) but-first finds
 end
 
 ;  See:
@@ -81,50 +184,50 @@ end
 ;    strings. SIAM Journal on Computing 6(2): 323-350. doi: 10.1137/0206024.
 ;
 ;  Note that the terse variable names are those used in the KMP 1977 paper.
-to-report str-matches [#s #pat]
-  let [j k] [0 0]
-  let finds []
-  let table get-table #pat
-  while [ j < length #s ] [
-    ifelse item k #pat = item j #s [
-      set j j + 1
-      set k k + 1
-      if k = length #pat [
-        set finds lput (j - k) finds
-        set k item k table
-      ]
-    ]
-    [
-      set k item k table
-      if k < 0 [
-        set j j + 1
-        set k k + 1
-      ]
-    ]
-  ]
-  report finds
-end
+;to-report all-positions [#s #pat]
+;  let [j k] [0 0]
+;  let finds []
+;  let table get-table #pat
+;  while [ j < length #s ] [
+;    ifelse item k #pat = item j #s [
+;      set j j + 1
+;      set k k + 1
+;      if k = length #pat [
+;        set finds lput (j - k) finds
+;        set k item k table
+;      ]
+;    ]
+;    [
+;      set k item k table
+;      if k < 0 [
+;        set j j + 1
+;        set k k + 1
+;      ]
+;    ]
+;  ]
+;  report finds
+;end
 
-to-report get-table [#pat]
-  let pos 1
-  let cnd 0
-  let T (sentence [-1] n-values length #pat [i -> nobody])
-  while [ pos < length #pat ] [
-    ifelse item pos #pat = item cnd #pat [
-      set T replace-item pos T item cnd T
-    ]
-    [
-      set T replace-item pos T cnd
-      while [ cnd >= 0 and item pos #pat != item cnd #pat ] [
-        set cnd item cnd T
-      ]
-    ]
-    set pos pos + 1
-    set cnd cnd + 1
-  ]
-  report replace-item pos T cnd
-end
-
+;to-report get-table [#pat]
+;  let pos 1
+;  let cnd 0
+;  let T (sentence [-1] n-values length #pat [i -> nobody])
+;  while [ pos < length #pat ] [
+;    ifelse item pos #pat = item cnd #pat [
+;      set T replace-item pos T item cnd T
+;    ]
+;    [
+;      set T replace-item pos T cnd
+;      while [ cnd >= 0 and item pos #pat != item cnd #pat ] [
+;        set cnd item cnd T
+;      ]
+;    ]
+;    set pos pos + 1
+;    set cnd cnd + 1
+;  ]
+;  report replace-item pos T cnd
+;end
+;
 
 ;; The MIT License (MIT)
 ;;

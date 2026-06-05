@@ -8,6 +8,8 @@ Code for lists and probability distributions is reasonably mature and documented
 
 Additional utility packs remain 'under-development' although they should work OK, but are not yet documented.
 
++ `string-utils.nls` for simple string manipulations
 + `drawing-utils.nls` for drawing boundaries between patches with different values
-+ `string-utils.nls` for manipulating strings (still thinking about what functionality to include in this)
 + `nlm-utils.nls` for neutral landscapes
+
+The corresponding `*.nlogox` files test most of the procedures and reporters in the `.nls` files.
