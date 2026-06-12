@@ -106,14 +106,7 @@ update-displays true</button>
 ]
 update-displays true</button>
     <slider x="618" step="0.01" y="488" max="10" display="gamma-mean" height="33" min="0" direction="Horizontal" default="5.0" variable="gamma-mean" width="172" sizeVersion="0"></slider>
-    <slider x="617" step="0.001" y="530" max="10" display="gamma-sd" height="33" min="0" direction="Horizontal" default="6.051" variable="gamma-sd" width="172" sizeVersion="0"></slider>
     <monitor x="14" precision="5" y="613" height="45" fontSize="11" display="sd" width="93" sizeVersion="0">population-standard-deviation [ifelse-value colour-by-value? [value] [weight]] of patches</monitor>
-    <button x="449" y="604" height="33" disableUntilTicks="false" forever="false" kind="Observer" display="test-lognormal" width="136" sizeVersion="0">ask patches [
-  set value random-lognormal log-mean log-sd
-]
-update-displays true</button>
-    <slider x="622" step="0.01" y="591" max="10" display="log-mean" height="33" min="0.01" direction="Horizontal" default="3.13" variable="log-mean" width="172" sizeVersion="0"></slider>
-    <slider x="625" step="0.01" y="643" max="2" display="log-sd" height="33" min="0" direction="Horizontal" default="0.99" variable="log-sd" width="172" sizeVersion="0"></slider>
     <slider x="621" step="0.1" y="104" max="100" display="multinomial-mean" height="33" min="0.1" direction="Horizontal" default="63.8" variable="multinomial-mean" width="198" sizeVersion="0"></slider>
     <button x="451" y="143" height="33" disableUntilTicks="false" forever="false" kind="Observer" display="test-multinomial-float" width="154" sizeVersion="0"><![CDATA[ask patches [
   set weight random-exponential multinomial-mean
@@ -125,6 +118,18 @@ let values random-multinomial (count patches * number-of-draws) weights true
 ]) 
 update-displays colour-by-value?
 ]]></button>
+    <slider x="618" step="0.01" y="572" max="10" display="log-mean" height="33" min="0.01" direction="Horizontal" default="3.13" variable="log-mean" width="172" sizeVersion="0"></slider>
+    <button x="445" y="585" height="33" disableUntilTicks="false" forever="false" kind="Observer" display="test-lognormal" width="136" sizeVersion="0">ask patches [
+  set value random-lognormal log-mean log-sd
+]
+update-displays true</button>
+    <slider x="618" step="0.001" y="525" max="10" display="gamma-sd" height="33" min="0" direction="Horizontal" default="6.051" variable="gamma-sd" width="172" sizeVersion="0"></slider>
+    <slider x="619" step="0.01" y="611" max="2" display="log-sd" height="33" min="0" direction="Horizontal" default="0.99" variable="log-sd" width="172" sizeVersion="0"></slider>
+    <button x="448" y="656" height="40" disableUntilTicks="false" forever="false" kind="Observer" width="125" display="random-triangular">ask patches [
+  set value random-triangular 0 1 modal-value
+]
+update-displays true</button>
+    <slider x="617" step="0.001" y="654" max="1" display="modal-value" height="33" min="0" direction="Horizontal" default="0.348" variable="modal-value" width="177" sizeVersion="0"></slider>
   </widgets>
   <info><![CDATA[# distributions-utils.nls documentation
 This document is intended to provide a guide to usage of the functions provided in the file `distribution-utils.nls`.

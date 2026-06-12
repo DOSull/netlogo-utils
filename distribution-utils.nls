@@ -126,6 +126,20 @@ to-report random-gamma-with-mean-sd [#mean #standard-deviation]
 end
 
 
+to-report random-triangular [#min #max #mode]
+  let scaled-mode rescale #mode #min #max 0 1
+  let result nobody
+  let done? false
+  while [not done?] [
+    set result random-float 1
+    ifelse result < scaled-mode
+    [ set done? random-float 1 < (result / scaled-mode) ]
+    [ set done? random-float 1 < ((1 - result) / (1 - scaled-mode)) ]
+  ]
+  report rescale result 0 1 #min #max
+end
+
+
 to-report population-standard-deviation [#x]
   report sqrt population-variance #x
 end

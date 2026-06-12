@@ -1,119 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <model version="NetLogo 7.0.0" snapToGrid="false">
-  <code><![CDATA[extensions [ palette ]
+  <code><![CDATA[__includes [ "radio-buttons-utils.nls" ]
 
-__includes [ "nlm-utils.nls" ]
-
-globals [mask]
-
-to setup 
+to setup
   clear-all
-  set mask patches with [distance patch 0 0 < (world-width * 0.48)]
-  create-turtles 50 [
-    setxy random-xcor random-ycor
-    set hidden? true
-    set shape "circle 2"
-  ]
-end
-
-to colour-patches [#patches]
-  clear-drawing
-  ask patches [set pcolor grey]
-  let min-z min [nlm-z] of #patches
-  let max-z max [nlm-z] of #patches
-  ask #patches [
-    set pcolor palette:scale-gradient [[26 0 0] [204 0 0] [255 255 178]] nlm-z 0 1
-  ]
-end
-
-to draw-block [block]
-  let artist nobody
-  create-turtles 1 [
-    set color white
-    set artist self
-  ]
-  let min-x min [pxcor] of block - 0.499
-  let min-y min [pycor] of block - 0.499
-  let max-x max [pxcor] of block + 0.499
-  let max-y max [pycor] of block + 0.499
-  ask artist [
-    setxy min-x min-y
-    pd
-    setxy min-x max-y
-    setxy max-x max-y
-    setxy max-x min-y
-    setxy min-x min-y
-    die
-  ]
-end
-
-
-;; The MIT License (MIT)
-;;
-;; Copyright (c) 2021-26 David O'Sullivan
-;;
-;; Permission is hereby granted, free of charge, to any person
-;; obtaining a copy of this software and associated documentation
-;; files (the "Software"), to deal in the Software without restriction,
-;; including without limitation the rights to use, copy, modify, merge,
-;; publish, distribute, sublicense, and/or sell copies of the Software,
-;; and to  permit persons to whom the Software is furnished to do so,
-;; subject to the following conditions:
-;;
-;; The above copyright notice and this permission notice shall be included
-;; in all copies or substantial portions of the Software.
-;;
-;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-;; OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-;; FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-;; THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-;; LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-;; FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-;; DEALINGS IN THE SOFTWARE.
-
-]]></code>
+  setup-buttons n-values 10 [i -> true] "change-settings?"
+end]]></code>
   <widgets>
-    <view x="210" wrappingAllowedX="false" y="10" frameRate="30.0" minPycor="-128" height="518" showTickCounter="true" patchSize="2.0" fontSize="10" wrappingAllowedY="false" width="518" tickCounterLabel="ticks" maxPycor="128" updateMode="1" maxPxcor="128" minPxcor="-128"></view>
-    <button x="32" y="300" height="33" disableUntilTicks="false" forever="false" kind="Observer" display="rectangular-clusters" width="134" sizeVersion="0">clear-drawing
-let basis ifelse-value mask? [mask] [patches]
-nlm-rectangular-clusters basis 0.05 0.15
-colour-patches basis</button>
-    <slider x="32" step="0.1" y="169" max="360" display="bearing" height="33" min="0" direction="Horizontal" default="138.2" variable="bearing" width="134" sizeVersion="0"></slider>
-    <button x="32" y="27" height="33" disableUntilTicks="false" forever="false" kind="Observer" width="134" sizeVersion="0">setup</button>
-    <button x="32" y="80" height="35" disableUntilTicks="false" forever="false" kind="Observer" width="134" display="random-landscape">clear-drawing
-let basis ifelse-value mask? [mask] [patches]
-nlm-random basis
-colour-patches basis</button>
-    <button x="32" y="209" height="33" disableUntilTicks="false" forever="false" kind="Observer" display="edge-gradient" width="134" sizeVersion="0">clear-drawing
-let basis ifelse-value mask? [mask] [patches]
-nlm-edge-gradient basis bearing
-colour-patches basis</button>
-    <button x="32" y="128" height="35" disableUntilTicks="false" forever="false" kind="Observer" width="134" display="planar-gradient">clear-drawing
-let basis ifelse-value mask? [mask] [patches]
-nlm-planar-gradient basis "nlm-z" bearing
-colour-patches basis</button>
-    <button x="32" y="248" height="35" disableUntilTicks="false" forever="false" kind="Observer" width="134" display="distance-gradient">clear-drawing
-let basis ifelse-value mask? [mask] [patches]
-let block get-random-block patches 0.05 0.2 0.05 0.2
-nlm-distance-gradient basis block
-colour-patches basis
-draw-block block</button>
-    <button x="32" y="347" height="33" disableUntilTicks="false" forever="false" kind="Observer" display="nearest-neighbour" width="134" sizeVersion="0">clear-drawing
-let basis ifelse-value mask? [mask] [patches]
-nlm-nearest-neighbour basis n-clusters
-colour-patches basis</button>
-    <slider x="32" step="1" y="384" max="500" display="n-clusters" height="33" min="5" direction="Horizontal" default="359.0" variable="n-clusters" width="134" sizeVersion="0"></slider>
-    <switch x="66" y="549" height="33" on="false" variable="mask?" display="mask?" width="90" sizeVersion="0"></switch>
+    <view x="368" wrappingAllowedX="true" y="10" frameRate="30.0" minPycor="-300" height="605" showTickCounter="true" patchSize="1.0" fontSize="12" wrappingAllowedY="true" width="325" tickCounterLabel="ticks" maxPycor="300" updateMode="0" maxPxcor="160" minPxcor="-160"></view>
+    <output x="135" y="84" height="260" fontSize="12" width="216"></output>
+    <button x="23" y="22" height="40" disableUntilTicks="false" forever="false" kind="Observer" width="55">setup</button>
+    <button x="222" y="22" height="40" disableUntilTicks="false" forever="true" kind="Observer" width="128" sizeVersion="0">change-buttons</button>
+    <switch x="95" y="26" height="33" on="false" variable="change-settings?" display="change-settings?" width="121" sizeVersion="0"></switch>
   </widgets>
-  <info><![CDATA[## The MIT License (MIT)
-Copyright &copy; 2021-26 David O'Sullivan
+  <info>## WHAT IS IT?
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+(a general understanding of what the model is trying to show or explain)
 
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+## HOW IT WORKS
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-]]></info>
+(what rules the agents use to create the overall behavior of the model)
+
+## HOW TO USE IT
+
+(how to use the model, including a description of each of the items in the Interface tab)
+
+## THINGS TO NOTICE
+
+(suggested things for the user to notice while running the model)
+
+## THINGS TO TRY
+
+(suggested things for the user to try to do (move sliders, switches, etc.) with the model)
+
+## EXTENDING THE MODEL
+
+(suggested things to add or change in the Code tab to make the model more complicated, detailed, accurate, etc.)
+
+## NETLOGO FEATURES
+
+(interesting or unusual features of NetLogo that the model uses, particularly in the Code tab; or where workarounds were needed for missing features)
+
+## RELATED MODELS
+
+(models in the NetLogo Models Library and elsewhere which are of related interest)
+
+## CREDITS AND REFERENCES
+
+(a reference to the model's URL on the web if it has one, as well as any other necessary credits, citations, and links)
+</info>
   <turtleShapes>
     <shape name="default" rotatable="true" editableColorIndex="0">
       <polygon color="-1920102913" filled="true" marked="true">
